@@ -14,6 +14,7 @@ export default function App() {
   const [lifeStage, setLifeStage] = useState<LifeStage>('Menstruating');
   const [isVegan, setIsVegan] = useState<boolean>(false);
   const [cycleType, setCycleType] = useState<CycleType>('Regular');
+  const [pregnancyWeek, setPregnancyWeek] = useState<number>(1);
   
   const [chatMessage, setChatMessage] = useState('');
   const [chatHistory, setChatHistory] = useState<{ role: 'user' | 'bot'; text: string }[]>([
@@ -33,6 +34,7 @@ export default function App() {
       setLifeStage(currentUser.lifeStage || 'Menstruating');
       setIsVegan(currentUser.isVegan || false);
       setCycleType(currentUser.cycleType || 'Regular');
+      setPregnancyWeek(currentUser.pregnancyWeek || 1);
     }
   }, []);
 
@@ -77,6 +79,14 @@ export default function App() {
     }
   };
 
+  const handlePregnancyWeekChange = (newWeek: number) => {
+    setPregnancyWeek(newWeek);
+    if (user) {
+      updateUserProfile({ pregnancyWeek: newWeek });
+      setUser({ ...user, pregnancyWeek: newWeek });
+    }
+  };
+
   const handleVeganToggle = () => {
     const newValue = !isVegan;
     setIsVegan(newValue);
@@ -90,7 +100,7 @@ export default function App() {
     endOfChatRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [chatHistory]);
 
-  const cycleData = getPhase(day, lifeStage, cycleType);
+  const cycleData = getPhase(day, lifeStage, cycleType, pregnancyWeek);
   const meals = getMeals(cycleData.phase, location, isPcos, isVegan);
   const workouts = getWorkouts(cycleData.phase, isPcos);
   const shoppingList = getShoppingList(cycleData.phase, location, isPcos, isVegan);
@@ -132,6 +142,7 @@ export default function App() {
     setLifeStage('Menstruating');
     setIsVegan(false);
     setCycleType('Regular');
+    setPregnancyWeek(1);
   };
 
   return (
@@ -180,6 +191,7 @@ export default function App() {
             setLifeStage(u.lifeStage || 'Menstruating');
             setIsVegan(u.isVegan || false);
             setCycleType(u.cycleType || 'Regular');
+            setPregnancyWeek(u.pregnancyWeek || 1);
             setShowAuth(false);
           }}
         />
@@ -204,6 +216,8 @@ export default function App() {
                 <option value="Menstruating">Active Menstrual Cycle</option>
                 <option value="Perimenopause">Perimenopause</option>
                 <option value="Menopause">Menopause</option>
+                <option value="Pregnancy">Pregnancy</option>
+                <option value="Postpartum">Postpartum</option>
               </select>
             </div>
           </div>
@@ -249,6 +263,32 @@ export default function App() {
                   <div className="flex justify-between text-xs text-slate-400 mt-1">
                     <span>Day 1</span>
                     <span>Day {cycleType === 'Irregular - Long' ? 45 : 28}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {lifeStage === 'Pregnancy' && (
+            <div className="bg-rose-50 p-6 rounded-2xl shadow-sm border border-rose-100">
+              <h2 className="font-semibold text-lg mb-4 flex items-center gap-2 text-rose-800">
+                <Heart className="w-5 h-5 text-rose-500" />
+                Pregnancy Tracker
+              </h2>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-rose-700 mb-1">Pregnancy Week ({pregnancyWeek})</label>
+                  <input 
+                    type="range" 
+                    min="1" 
+                    max="42" 
+                    value={pregnancyWeek} 
+                    onChange={(e) => handlePregnancyWeekChange(Number(e.target.value))}
+                    className="w-full accent-rose-500"
+                  />
+                  <div className="flex justify-between text-xs text-rose-400 mt-1">
+                    <span>Week 1</span>
+                    <span>Week 42</span>
                   </div>
                 </div>
               </div>

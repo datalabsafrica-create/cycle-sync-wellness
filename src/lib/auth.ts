@@ -10,6 +10,7 @@ export interface UserProfile {
   lifeStage?: LifeStage;
   isVegan?: boolean;
   cycleType?: CycleType;
+  pregnancyWeek?: number;
 }
 
 const USERS_KEY = 'cycle_sync_users';

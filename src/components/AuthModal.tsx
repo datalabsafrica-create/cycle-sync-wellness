@@ -52,6 +52,7 @@ export default function AuthModal({ onSuccess, onClose }: AuthModalProps) {
         lifeStage: 'Menstruating',
         isVegan: false,
         cycleType: 'Regular',
+        pregnancyWeek: 1,
       };
       users[id] = newUser;
       saveUsers(users);

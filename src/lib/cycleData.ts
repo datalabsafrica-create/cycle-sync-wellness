@@ -1,6 +1,6 @@
-export type Phase = 'Menstrual' | 'Follicular' | 'Ovulation' | 'Luteal' | 'Perimenopause' | 'Menopause';
+export type Phase = 'Menstrual' | 'Follicular' | 'Ovulation' | 'Luteal' | 'Perimenopause' | 'Menopause' | 'Pregnancy - Trimester 1' | 'Pregnancy - Trimester 2' | 'Pregnancy - Trimester 3' | 'Postpartum';
 export type Location = 'East Africa' | 'West Africa' | 'Europe/USA' | 'Global';
-export type LifeStage = 'Menstruating' | 'Perimenopause' | 'Menopause';
+export type LifeStage = 'Menstruating' | 'Perimenopause' | 'Menopause' | 'Pregnancy' | 'Postpartum';
 export type CycleType = 'Regular' | 'Irregular - Long' | 'Irregular - Short' | 'Missing';
 
 export interface CycleData {
@@ -8,8 +8,18 @@ export interface CycleData {
   description: string;
 }
 
-export function getPhase(day: number, lifeStage: LifeStage = 'Menstruating', cycleType: CycleType = 'Regular'): CycleData {
-  if (lifeStage === 'Menopause') {
+export function getPhase(day: number, lifeStage: LifeStage = 'Menstruating', cycleType: CycleType = 'Regular', pregnancyWeek: number = 1): CycleData {
+  if (lifeStage === 'Pregnancy') {
+    if (pregnancyWeek <= 13) {
+      return { phase: 'Pregnancy - Trimester 1', description: `First Trimester (Week ${pregnancyWeek}): Focus on managing nausea, easy digestion, and folate-rich foods.` };
+    } else if (pregnancyWeek <= 26) {
+      return { phase: 'Pregnancy - Trimester 2', description: `Second Trimester (Week ${pregnancyWeek}): The 'honeymoon phase'. Energy may increase. Focus on iron and calcium for baby's growth.` };
+    } else {
+      return { phase: 'Pregnancy - Trimester 3', description: `Third Trimester (Week ${pregnancyWeek}): Preparing for birth. Focus on omega-3s, eating smaller frequent meals, and resting comfortably.` };
+    }
+  } else if (lifeStage === 'Postpartum') {
+    return { phase: 'Postpartum', description: 'The fourth trimester and beyond. Emphasis on deep recovery, replenishment of nutrient stores, and gentle rebuilding.' };
+  } else if (lifeStage === 'Menopause') {
     return { phase: 'Menopause', description: 'Post-menopause focus. Prioritizing bone density, heart health, and hormone balance.' };
   } else if (lifeStage === 'Perimenopause') {
     return { phase: 'Perimenopause', description: 'Navigating hormonal changes. Focus on stabilizing estrogen/progesterone, mood, and sleep.' };
@@ -46,6 +56,10 @@ export function getPhase(day: number, lifeStage: LifeStage = 'Menstruating', cyc
 }
 
 export function getSeedCycling(day: number, lifeStage: LifeStage = 'Menstruating', cycleType: CycleType = 'Regular'): string {
+  if (lifeStage === 'Pregnancy' || lifeStage === 'Postpartum') {
+    return 'For pregnancy and postpartum, focus on a varied intake of seeds for general nourishment (omega-3s, magnesium, iron) rather than strict cyclical syncing. Chia, hemp, and flax are excellent choices.';
+  }
+
   if (lifeStage === 'Menopause' || lifeStage === 'Perimenopause') {
     return 'For perimenopause and menopause, you can sync with the lunar cycle (Flax/Pumpkin from New to Full Moon, Sesame/Sunflower from Full to New Moon), or simply enjoy 1-2 tbsp of a mix daily for general hormone and bone support.';
   }
@@ -249,6 +263,94 @@ export function getMeals(phase: Phase, location: Location, isPcos: boolean, isVe
         `Fresh ${foods.fruits[0]} to support hydration.`
       ];
       break;
+    case 'Pregnancy - Trimester 1':
+      meals.breakfast = [
+        `Easy digest: Toast with ${foods.fats[0]} and a piece of ${foods.fruits[1]}.`,
+        `Ginger & fruit smoothie: ${foods.fruits[0]}, ginger, and ${proteins[0]} (if tolerated).`,
+        `Comforting porridge (${getCarb(isPcos)}) with a drizzle of honey and ${foods.fats[0]}.`
+      ];
+      meals.lunch = [
+        `Mild soup: Clear broth with ${foods.veggies[0]} and easy-to-digest ${foods.carbs[0]}.`,
+        `Simple crackers/bread (${foods.carbs[1]}) with small portions of ${proteins[1] || proteins[0]}.`,
+        `Baked ${foods.carbs[0]} with a spread of ${foods.fats[0]} to settle the stomach.`
+      ];
+      meals.dinner = [
+        `Light bowl: Plain ${foods.carbs[0]} with steamed ${foods.veggies[0]} and lean ${proteins[0]}.`,
+        `Nourishing broth with ${proteins[2] || proteins[0]} and soft cooked carrots.`,
+        `Gentle protein: Baked ${proteins[0]} with a side of ${foods.carbs[1]}.`
+      ];
+      meals.snack = [
+        `Dry crackers or light ${foods.carbs[1]} upon waking up.`,
+        `${foods.fruits[0]} or a few nuts (${foods.fats[0]}) if hungry.`,
+        `Ginger tea or plain water infused with ${foods.fruits[1]}.`
+      ];
+      break;
+    case 'Pregnancy - Trimester 2':
+      meals.breakfast = [
+        `Nourishing start: ${getCarb(isPcos)} with ${foods.fats[0]} and a side of well-cooked ${proteins[2] || proteins[0]}.`,
+        `High-protein folate boost: ${proteins[0]} with cooked ${foods.veggies[0]} and half a portion of ${foods.carbs[0]}.`,
+        `Energizing bowl: ${foods.fruits[0]} and ${foods.fats[1] || foods.fats[0]} with a boost of ${proteins[0]}.`
+      ];
+      meals.lunch = [
+        `Iron & vitamin C focus: ${foods.veggies[1]} base, ${proteins[1] || proteins[0]}, and citrus or ${foods.fruits[2] || foods.fruits[0]}.`,
+        `Balanced plate: Lean ${proteins[0]}, large serving of cooked ${foods.veggies[0]}, and ${foods.carbs[0]}.`,
+        `Hearty stew: ${foods.carbs[1]} paired with ${proteins[2] || proteins[0]} and cooked ${foods.veggies[0]}.`
+      ];
+      meals.dinner = [
+        `Bone & tissue support: Comforting stew with ${foods.carbs[0]}, ${foods.veggies[1]}, and ${proteins[1] || proteins[0]}.`,
+        `Calcium rich dinner: ${proteins[0]} baked with dark leafy ${foods.veggies[0]} and ${foods.fats[0]}.`,
+        `Easy digest warm meal: ${foods.veggies[0]} curry with ${proteins[0]} and ${foods.carbs[1]}.`
+      ];
+      meals.snack = [
+        `Hydrating ${foods.fruits[1]} with cooling ${foods.fats[1] || foods.fats[0]}.`,
+        `Calcium boost: ${foods.fats[0]} or calcium rich alternative.`,
+        `Small handful of walnuts/almonds (${foods.fats[0]}).`
+      ];
+      break;
+    case 'Pregnancy - Trimester 3':
+      meals.breakfast = [
+        `Energy sustaining: Smaller portion of ${getCarb(isPcos)} with ${foods.fats[0]} and ${proteins[0]} to avoid heartburn.`,
+        `Gentle smoothie: ${foods.fruits[0]}, ${foods.veggies[1]}, and nut butter (${foods.fats[0]}).`,
+        `Protein-rich mini meal: ${proteins[1] || proteins[0]} and a piece of ${foods.fruits[1]}.`
+      ];
+      meals.lunch = [
+        `Frequent small meals: ${foods.carbs[1]} with ${proteins[0]}, and well-cooked ${foods.veggies[0]}.`,
+        `Omega-rich: ${proteins[2] || proteins[0]} with ${foods.veggies[1]} and a drizzle of ${foods.fats[0]}.`,
+        `Light soup with ${foods.veggies[0]} and ${proteins[0]}.`
+      ];
+      meals.dinner = [
+        `Comforting & light: Small portion of ${foods.carbs[0]}, ${foods.veggies[1]}, and ${proteins[1] || proteins[0]}.`,
+        `Heartburn friendly: Baked ${proteins[0]} with steamed ${foods.veggies[0]} and ${foods.fats[0]}.`,
+        `Easy digest broth with a side of ${proteins[2] || proteins[0]}.`
+      ];
+      meals.snack = [
+        `Energy bites: Dates (${foods.fruits[0]}) with nut butter (${foods.fats[0]}) for birth prep.`,
+        `Hydration focus: Water-rich ${foods.fruits[1]} and a small portion of ${foods.fats[1] || foods.fats[0]}.`,
+        `Small frequent portions of ${foods.fruits[0]} to maintain blood sugar.`
+      ];
+      break;
+    case 'Postpartum':
+      meals.breakfast = [
+        `Warming & replenishing: Warm ${getCarb(isPcos)} porridge with ${foods.fats[0]} and ${proteins[1] || proteins[0]}.`,
+        `Tissue repair: Broth-based meal or ${proteins[0]} with cooked ${foods.veggies[0]} and ${foods.carbs[1]}.`,
+        `Lactation support (if nursing): Oats/porridge with ${foods.fruits[1]} and mixed seeds/nuts.`
+      ];
+      meals.lunch = [
+        `Deep nourishment: Rich stew with ${foods.carbs[1]}, iron-rich ${proteins[0]}, and cooked ${foods.veggies[0]}.`,
+        `Recovery bowl: Warm root veg (${foods.carbs[0]}), ${proteins[1] || proteins[0]}, and ${foods.fats[0]} dressing.`,
+        `Energy sustaining: Hearty soup with ${proteins[0]}, ${foods.veggies[0]}, and ${foods.carbs[0]}.`
+      ];
+      meals.dinner = [
+        `Blood building: Slow-cooked ${proteins[1] || proteins[0]} with magnesium-rich ${foods.veggies[1]} and ${foods.carbs[0]}.`,
+        `Comforting & grounding: ${proteins[2] || proteins[0]} baked with ${foods.veggies[0]} and healthy ${foods.fats[0]}.`,
+        `Easy to digest: Bone/veg broth with soft ${foods.veggies[0]} and a side of ${proteins[0]}.`
+      ];
+      meals.snack = [
+        `Energy bites: Dates (${foods.fruits[0]}) with nut butter (${foods.fats[0]}).`,
+        `Hydration focus: Water-rich ${foods.fruits[1]} and a small portion of ${foods.fats[1] || foods.fats[0]}.`,
+        `Protein top-up: Small serving of ${proteins[2] || proteins[0]} or mixed nuts.`
+      ];
+      break;
   }
   
   if (isPcos) {
@@ -289,6 +391,26 @@ export function getWorkouts(phase: Phase, isPcos: boolean): string[] {
       workouts.push('Weight-bearing exercises for preserving bone density.');
       workouts.push('Mobility and balance work to maintain joint health.');
       workouts.push('Consistent low-to-moderate impact cardio (walking, swimming).');
+      break;
+    case 'Pregnancy - Trimester 1':
+      workouts.push('Listen to your body. Rest is crucial during the first trimester.');
+      workouts.push('Gentle stretching and short, light walks to ease nausea.');
+      workouts.push('Always consult with your healthcare provider for pregnancy-safe exercises.');
+      break;
+    case 'Pregnancy - Trimester 2':
+      workouts.push('Prenatal Yoga or Pilates class tailored for pregnancy.');
+      workouts.push('Swimming or steady-state walking to boost energy and circulation.');
+      workouts.push('Light strength training targeting the back and glutes for posture support.');
+      break;
+    case 'Pregnancy - Trimester 3':
+      workouts.push('Pelvic floor awareness and deep breathing techniques for birth prep.');
+      workouts.push('Very gentle, short walks. Avoid standing for extended periods.');
+      workouts.push('Birthing ball exercises and hip opening stretches (with provider approval).');
+      break;
+    case 'Postpartum':
+      workouts.push('Prioritize deep rest and physical recovery initially.');
+      workouts.push('Gentle pelvic floor rehab and breathing exercises.');
+      workouts.push('Short, slow walks once cleared by a healthcare provider.');
       break;
   }
   
