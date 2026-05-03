@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
-import { Calendar, MapPin, Activity, Leaf, ShoppingCart, MessageCircle, Heart, Info, Send, User, LogOut } from 'lucide-react';
-import { getPhase, getMeals, getWorkouts, getShoppingList, getSeedCycling, Location } from './lib/cycleData';
+import { Calendar, MapPin, Activity, Leaf, ShoppingCart, MessageCircle, Heart, Info, Send, User, LogOut, Sun, Clock } from 'lucide-react';
+import { getPhase, getMeals, getWorkouts, getShoppingList, getSeedCycling, Location, LifeStage, CycleType } from './lib/cycleData';
 import AuthModal from './components/AuthModal';
 import { getCurrentUser, saveCurrentUser, updateUserProfile, UserProfile } from './lib/auth';
 
@@ -11,6 +11,9 @@ export default function App() {
   const [day, setDay] = useState<number>(1);
   const [location, setLocation] = useState<Location>('Global');
   const [isPcos, setIsPcos] = useState<boolean>(false);
+  const [lifeStage, setLifeStage] = useState<LifeStage>('Menstruating');
+  const [isVegan, setIsVegan] = useState<boolean>(false);
+  const [cycleType, setCycleType] = useState<CycleType>('Regular');
   
   const [chatMessage, setChatMessage] = useState('');
   const [chatHistory, setChatHistory] = useState<{ role: 'user' | 'bot'; text: string }[]>([
@@ -27,6 +30,9 @@ export default function App() {
       setDay(currentUser.day);
       setLocation(currentUser.location as Location);
       setIsPcos(currentUser.isPcos);
+      setLifeStage(currentUser.lifeStage || 'Menstruating');
+      setIsVegan(currentUser.isVegan || false);
+      setCycleType(currentUser.cycleType || 'Regular');
     }
   }, []);
 
@@ -55,15 +61,40 @@ export default function App() {
     }
   };
 
+  const handleLifeStageChange = (newStage: LifeStage) => {
+    setLifeStage(newStage);
+    if (user) {
+      updateUserProfile({ lifeStage: newStage });
+      setUser({ ...user, lifeStage: newStage });
+    }
+  };
+
+  const handleCycleTypeChange = (newType: CycleType) => {
+    setCycleType(newType);
+    if (user) {
+      updateUserProfile({ cycleType: newType });
+      setUser({ ...user, cycleType: newType });
+    }
+  };
+
+  const handleVeganToggle = () => {
+    const newValue = !isVegan;
+    setIsVegan(newValue);
+    if (user) {
+      updateUserProfile({ isVegan: newValue });
+      setUser({ ...user, isVegan: newValue });
+    }
+  };
+
   useEffect(() => {
     endOfChatRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [chatHistory]);
 
-  const cycleData = getPhase(day);
-  const meals = getMeals(cycleData.phase, location, isPcos);
+  const cycleData = getPhase(day, lifeStage, cycleType);
+  const meals = getMeals(cycleData.phase, location, isPcos, isVegan);
   const workouts = getWorkouts(cycleData.phase, isPcos);
-  const shoppingList = getShoppingList(cycleData.phase, location, isPcos);
-  const seedCycling = getSeedCycling(day);
+  const shoppingList = getShoppingList(cycleData.phase, location, isPcos, isVegan);
+  const seedCycling = getSeedCycling(day, lifeStage, cycleType);
 
   const handleSendMessage = (e: React.FormEvent) => {
     e.preventDefault();
@@ -98,6 +129,9 @@ export default function App() {
     setDay(1);
     setLocation('Global');
     setIsPcos(false);
+    setLifeStage('Menstruating');
+    setIsVegan(false);
+    setCycleType('Regular');
   };
 
   return (
@@ -143,6 +177,9 @@ export default function App() {
             setDay(u.day);
             setLocation(u.location as Location);
             setIsPcos(u.isPcos);
+            setLifeStage(u.lifeStage || 'Menstruating');
+            setIsVegan(u.isVegan || false);
+            setCycleType(u.cycleType || 'Regular');
             setShowAuth(false);
           }}
         />
@@ -155,27 +192,68 @@ export default function App() {
         <div className="lg:col-span-4 space-y-6">
           <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
             <h2 className="font-semibold text-lg mb-4 flex items-center gap-2">
-              <Calendar className="w-5 h-5 text-indigo-500" />
-              Your Cycle
+              <Sun className="w-5 h-5 text-amber-500" />
+              Life Stage
             </h2>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-slate-600 mb-1">Cycle Day ({day})</label>
-                <input 
-                  type="range" 
-                  min="1" 
-                  max="28" 
-                  value={day} 
-                  onChange={(e) => handleDayChange(Number(e.target.value))}
-                  className="w-full accent-indigo-500"
-                />
-                <div className="flex justify-between text-xs text-slate-400 mt-1">
-                  <span>Day 1</span>
-                  <span>Day 28</span>
+            <div className="space-y-2">
+              <select 
+                value={lifeStage}
+                onChange={(e) => handleLifeStageChange(e.target.value as LifeStage)}
+                className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
+              >
+                <option value="Menstruating">Active Menstrual Cycle</option>
+                <option value="Perimenopause">Perimenopause</option>
+                <option value="Menopause">Menopause</option>
+              </select>
+            </div>
+          </div>
+
+          {lifeStage === 'Menstruating' && (
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+              <h2 className="font-semibold text-lg mb-4 flex items-center gap-2">
+                <Clock className="w-5 h-5 text-blue-500" />
+                Cycle Pattern
+              </h2>
+              <div className="space-y-4">
+                <select 
+                  value={cycleType}
+                  onChange={(e) => handleCycleTypeChange(e.target.value as CycleType)}
+                  className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
+                >
+                  <option value="Regular">Regular (28-32 days)</option>
+                  <option value="Irregular - Long">Irregular / Long (&gt;35 days)</option>
+                  <option value="Irregular - Short">Irregular / Short (&lt;24 days)</option>
+                  <option value="Missing">Missing / Amenorrhea</option>
+                </select>
+              </div>
+            </div>
+          )}
+
+          {lifeStage === 'Menstruating' && cycleType !== 'Missing' && (
+            <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+              <h2 className="font-semibold text-lg mb-4 flex items-center gap-2">
+                <Calendar className="w-5 h-5 text-indigo-500" />
+                Your Cycle
+              </h2>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-slate-600 mb-1">Cycle Day ({day})</label>
+                  <input 
+                    type="range" 
+                    min="1" 
+                    max={cycleType === 'Irregular - Long' ? 45 : 28} 
+                    value={day} 
+                    onChange={(e) => handleDayChange(Number(e.target.value))}
+                    className="w-full accent-indigo-500"
+                  />
+                  <div className="flex justify-between text-xs text-slate-400 mt-1">
+                    <span>Day 1</span>
+                    <span>Day {cycleType === 'Irregular - Long' ? 45 : 28}</span>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
+          )}
 
           <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
             <h2 className="font-semibold text-lg mb-4 flex items-center gap-2">
@@ -198,20 +276,38 @@ export default function App() {
           </div>
 
           <div className="bg-purple-50 p-6 rounded-2xl border border-purple-100">
-            <div className="flex items-center justify-between">
-              <div>
-                <h2 className="font-semibold text-lg text-purple-900 flex items-center gap-2">
-                  <Activity className="w-5 h-5 text-purple-600" />
-                  PCOS Mode
-                </h2>
-                <p className="text-xs text-purple-700 mt-1">Optimize for insulin resistance</p>
+            <div className="flex flex-col gap-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="font-semibold text-lg text-purple-900 flex items-center gap-2">
+                    <Activity className="w-5 h-5 text-purple-600" />
+                    PCOS Mode
+                  </h2>
+                  <p className="text-xs text-purple-700 mt-1">Optimize for insulin resistance</p>
+                </div>
+                <button 
+                  onClick={handlePcosToggle}
+                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${isPcos ? 'bg-purple-600' : 'bg-slate-300'}`}
+                >
+                  <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${isPcos ? 'translate-x-6' : 'translate-x-1'}`} />
+                </button>
               </div>
-              <button 
-                onClick={handlePcosToggle}
-                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${isPcos ? 'bg-purple-600' : 'bg-slate-300'}`}
-              >
-                <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${isPcos ? 'translate-x-6' : 'translate-x-1'}`} />
-              </button>
+
+              <div className="flex items-center justify-between border-t border-purple-200/50 pt-4">
+                <div>
+                  <h2 className="font-semibold text-lg text-emerald-900 flex items-center gap-2">
+                    <Leaf className="w-5 h-5 text-emerald-600" />
+                    Vegan
+                  </h2>
+                  <p className="text-xs text-emerald-700 mt-1">Plant-based meals</p>
+                </div>
+                <button 
+                  onClick={handleVeganToggle}
+                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${isVegan ? 'bg-emerald-600' : 'bg-slate-300'}`}
+                >
+                  <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${isVegan ? 'translate-x-6' : 'translate-x-1'}`} />
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -243,20 +339,28 @@ export default function App() {
               </h3>
               <ul className="space-y-4">
                 <li className="text-sm border-b pb-3 border-transparent">
-                  <strong className="block text-slate-500 mb-1">Breakfast</strong>
-                  <span className="text-slate-700">{meals.breakfast}</span>
+                  <strong className="block text-slate-500 mb-1">Breakfast Options</strong>
+                  <ul className="list-disc list-inside text-slate-700 space-y-1">
+                    {meals.breakfast.map((m, i) => <li key={i}>{m}</li>)}
+                  </ul>
                 </li>
                 <li className="text-sm border-b pb-3 border-transparent">
-                  <strong className="block text-slate-500 mb-1">Lunch</strong>
-                  <span className="text-slate-700">{meals.lunch}</span>
+                  <strong className="block text-slate-500 mb-1">Lunch Options</strong>
+                  <ul className="list-disc list-inside text-slate-700 space-y-1">
+                    {meals.lunch.map((m, i) => <li key={i}>{m}</li>)}
+                  </ul>
                 </li>
                 <li className="text-sm border-b pb-3 border-transparent">
-                  <strong className="block text-slate-500 mb-1">Dinner</strong>
-                  <span className="text-slate-700">{meals.dinner}</span>
+                  <strong className="block text-slate-500 mb-1">Dinner Options</strong>
+                  <ul className="list-disc list-inside text-slate-700 space-y-1">
+                    {meals.dinner.map((m, i) => <li key={i}>{m}</li>)}
+                  </ul>
                 </li>
                 <li className="text-sm">
-                  <strong className="block text-slate-500 mb-1">Snack</strong>
-                  <span className="text-slate-700">{meals.snack}</span>
+                  <strong className="block text-slate-500 mb-1">Snack Options</strong>
+                  <ul className="list-disc list-inside text-slate-700 space-y-1">
+                    {meals.snack.map((m, i) => <li key={i}>{m}</li>)}
+                  </ul>
                 </li>
               </ul>
             </div>

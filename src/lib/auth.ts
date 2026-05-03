@@ -1,3 +1,5 @@
+import { LifeStage, CycleType } from './cycleData';
+
 export interface UserProfile {
   id: string;
   email: string;
@@ -5,6 +7,9 @@ export interface UserProfile {
   day: number;
   location: string;
   isPcos: boolean;
+  lifeStage?: LifeStage;
+  isVegan?: boolean;
+  cycleType?: CycleType;
 }
 
 const USERS_KEY = 'cycle_sync_users';
