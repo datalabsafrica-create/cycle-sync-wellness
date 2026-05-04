@@ -355,12 +355,9 @@ export default function App() {
                       <span className="text-xs font-bold text-slate-500 uppercase flex items-center gap-1">Lunch</span>
                       <p className="text-sm text-slate-700 mt-1">{meals.lunch[0]}</p>
                     </div>
-                    <div className="bg-slate-50 p-3 rounded-xl border border-slate-100 relative">
-                       <div className="absolute inset-0 bg-gradient-to-b from-transparent to-white/90 backdrop-blur-[1px] flex items-end justify-center pb-2 z-10 rounded-xl">
-                          <span className="text-xs font-bold text-slate-600 flex items-center gap-1"><Lock className="w-3 h-3"/> Unlock full week</span>
-                       </div>
+                    <div className="bg-slate-50 p-3 rounded-xl border border-slate-100">
                       <span className="text-xs font-bold text-slate-500 uppercase">Dinner</span>
-                      <p className="text-sm text-slate-700 mt-1 blur-sm select-none">{meals.dinner[0]}</p>
+                      <p className="text-sm text-slate-700 mt-1">{meals.dinner[0]}</p>
                     </div>
                   </div>
                 </div>
@@ -387,12 +384,9 @@ export default function App() {
                       <span className="text-xs font-bold text-slate-500 uppercase flex items-center gap-1">Day 1 Focus</span>
                       <p className="text-sm text-slate-700 mt-1 font-medium">{workouts.daily[0]}</p>
                     </div>
-                    <div className="bg-slate-50 p-3 rounded-xl border border-slate-100 relative">
-                       <div className="absolute inset-0 bg-gradient-to-b from-transparent to-white/90 backdrop-blur-[1px] flex items-end justify-center pb-2 z-10 rounded-xl">
-                          <span className="text-xs font-bold text-slate-600 flex items-center gap-1"><Lock className="w-3 h-3"/> Unlock full weekly routine</span>
-                       </div>
+                    <div className="bg-slate-50 p-3 rounded-xl border border-slate-100">
                       <span className="text-xs font-bold text-slate-500 uppercase">Day 2 Focus</span>
-                      <p className="text-sm text-slate-700 mt-1 blur-sm select-none">{workouts.daily[1]}</p>
+                      <p className="text-sm text-slate-700 mt-1">{workouts.daily[1]}</p>
                     </div>
                   </div>
                   
