@@ -17,12 +17,12 @@ export default function App() {
   const [budget, setBudget] = useState<string>('Medium');
   const [activityLevel, setActivityLevel] = useState<string>('Moderate');
   const [workoutPref, setWorkoutPref] = useState<string>('Home');
+  const [isPcos, setIsPcos] = useState<boolean>(false);
   
   const [showPayment, setShowPayment] = useState(false);
   const [hasPaid, setHasPaid] = useState(false);
   const [deliveryMethod, setDeliveryMethod] = useState<'whatsapp' | 'email' | null>(null);
 
-  const isPcos = mode === 'PCOS';
   const isVegan = diet === 'Vegan';
 
   const cycleData = getPhase(day, mode, cycleType, pregnancyWeek);
@@ -45,7 +45,10 @@ export default function App() {
     }
 
     text += `*Workout Routine:*\n`;
-    workouts.forEach(w => text += `- ${w}\n`);
+    text += `Strategy:\n`;
+    workouts.strategy.forEach(w => text += `- ${w}\n`);
+    text += `\n7-Day Plan:\n`;
+    workouts.daily.forEach((w, i) => text += `Day ${i+1}: ${w}\n`);
     text += `\n`;
 
     text += `*Wellness & Seed Cycling Tips:*\n`;
@@ -82,10 +85,18 @@ export default function App() {
 
       {hasPaid && (
          <div className="bg-emerald-50 p-6 rounded-2xl border border-emerald-100 flex flex-col gap-3">
-            <h3 className="font-bold text-emerald-900 flex items-center gap-2">
-              <CheckCircle className="w-5 h-5 text-emerald-600" />
-              Plan Unlocked
-            </h3>
+            <div className="flex items-center justify-between">
+              <h3 className="font-bold text-emerald-900 flex items-center gap-2">
+                <CheckCircle className="w-5 h-5 text-emerald-600" />
+                Plan Unlocked
+              </h3>
+              <button
+                onClick={() => setHasPaid(false)}
+                className="text-xs font-semibold px-2.5 py-1.5 bg-emerald-100 text-emerald-800 rounded-lg hover:bg-emerald-200 transition-colors"
+              >
+                Exit Premium
+              </button>
+            </div>
             <p className="text-sm text-emerald-800">
               Your 7-day personalized plan has been generated and queued for delivery via <strong>{deliveryMethod === 'whatsapp' ? 'WhatsApp' : 'Email'}</strong>.
             </p>
@@ -104,14 +115,13 @@ export default function App() {
             className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
           >
             <option value="Cycle Sync">Cycle Sync Mode (Default)</option>
-            <option value="PCOS">PCOS Mode</option>
             <option value="Perimenopause">Perimenopause Mode</option>
             <option value="Menopause">Menopause Mode</option>
             <option value="Pregnancy">Pregnancy Mode</option>
             <option value="Postpartum">Postpartum Mode</option>
           </select>
 
-          {['Cycle Sync', 'PCOS'].includes(mode) && (
+          {mode === 'Cycle Sync' && (
             <div>
               <label className="block text-sm font-medium text-slate-600 mb-1">Cycle Day ({day})</label>
               <input 
@@ -243,6 +253,19 @@ export default function App() {
               </select>
             </div>
           </div>
+          
+          <div className="flex items-center gap-3 bg-slate-50 p-3 rounded-xl border border-slate-200 mt-2">
+             <input 
+               type="checkbox" 
+               id="pcos-toggle" 
+               checked={isPcos} 
+               onChange={(e) => setIsPcos(e.target.checked)} 
+               className="w-4 h-4 accent-indigo-600 rounded text-indigo-600" 
+             />
+             <label htmlFor="pcos-toggle" className="text-sm font-medium text-slate-700 cursor-pointer">
+               I have PCOS (Adjusts meals & workouts)
+             </label>
+          </div>
         </div>
       </div>
     </div>
@@ -257,13 +280,21 @@ export default function App() {
             <h1 className="text-xl font-bold tracking-tight text-slate-800">Women's Wellness App</h1>
           </div>
           <div className="flex items-center gap-4">
-            {!hasPaid && (
+            {!hasPaid ? (
                <button
                   onClick={() => setShowPayment(true)}
-                  className="hidden sm:inline-flex items-center gap-2 px-4 py-2 bg-slate-900 text-white text-sm font-medium rounded-lg hover:bg-slate-800 transition-all font-semibold"
+                  className="inline-flex items-center gap-2 px-3 py-2 sm:px-4 sm:py-2 bg-slate-900 text-white text-sm font-medium rounded-lg hover:bg-slate-800 transition-all font-semibold"
                 >
                   <Lock className="w-4 h-4" />
-                  Unlock Weekly Plan
+                  <span className="hidden sm:inline">Unlock Weekly Plan</span>
+                  <span className="sm:hidden">Unlock Plan</span>
+                </button>
+            ) : (
+                <button
+                  onClick={() => setHasPaid(false)}
+                  className="inline-flex items-center gap-2 px-4 py-2 bg-slate-100 text-slate-700 text-sm font-medium rounded-lg hover:bg-slate-200 transition-all font-semibold"
+                >
+                  Exit Premium
                 </button>
             )}
           </div>
@@ -297,6 +328,7 @@ export default function App() {
               <span className="text-sm text-slate-600 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-100">Location: <b>{location}</b></span>
               <span className="text-sm text-slate-600 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-100">Goal: <b>{goal}</b></span>
               <span className="text-sm text-slate-600 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-100">Diet: <b>{diet}</b></span>
+              {isPcos && <span className="text-sm text-rose-600 bg-rose-50 px-3 py-1.5 rounded-lg border border-rose-100 font-medium">PCOS Modifications Active</span>}
             </div>
             
             <div className="mt-4 p-4 bg-indigo-50/50 border border-indigo-100 rounded-xl">
@@ -338,14 +370,31 @@ export default function App() {
                     <Activity className="w-5 h-5 text-amber-500" />
                     Workout Preview
                   </h3>
-                  <ul className="space-y-3">
-                    {workouts.map((workout, idx) => (
-                      <li key={idx} className="flex gap-3 text-sm text-slate-700">
-                        <div className="mt-1 shrink-0 w-1.5 h-1.5 rounded-full bg-amber-400" />
-                        <span>{workout}</span>
-                      </li>
-                    ))}
-                  </ul>
+                  <div className="space-y-4">
+                    <div className="bg-slate-50 p-3 rounded-xl border border-slate-100 mb-3">
+                      <span className="text-xs font-bold text-amber-600 uppercase mb-2 block">Strategy</span>
+                      <ul className="space-y-2">
+                        {workouts.strategy.map((workout, idx) => (
+                          <li key={idx} className="flex gap-2 text-sm text-slate-700">
+                            <div className="mt-1.5 shrink-0 w-1.5 h-1.5 rounded-full bg-amber-400" />
+                            <span>{workout}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                    
+                    <div className="bg-slate-50 p-3 rounded-xl border border-slate-100">
+                      <span className="text-xs font-bold text-slate-500 uppercase flex items-center gap-1">Day 1 Focus</span>
+                      <p className="text-sm text-slate-700 mt-1 font-medium">{workouts.daily[0]}</p>
+                    </div>
+                    <div className="bg-slate-50 p-3 rounded-xl border border-slate-100 relative">
+                       <div className="absolute inset-0 bg-gradient-to-b from-transparent to-white/90 backdrop-blur-[1px] flex items-end justify-center pb-2 z-10 rounded-xl">
+                          <span className="text-xs font-bold text-slate-600 flex items-center gap-1"><Lock className="w-3 h-3"/> Unlock full weekly routine</span>
+                       </div>
+                      <span className="text-xs font-bold text-slate-500 uppercase">Day 2 Focus</span>
+                      <p className="text-sm text-slate-700 mt-1 blur-sm select-none">{workouts.daily[1]}</p>
+                    </div>
+                  </div>
                   
                   <div className="mt-6 p-4 border border-rose-100 bg-rose-50/50 rounded-xl">
                       <h4 className="font-semibold text-rose-900 text-sm mb-1 flex items-center gap-1"><Info className="w-4 h-4"/> Wellness Insight</h4>
@@ -445,18 +494,39 @@ export default function App() {
 
                   <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 h-full flex flex-col gap-6">
                     <div>
-                      <h3 className="font-semibold text-lg mb-2 flex items-center gap-2 text-slate-800">
+                      <h3 className="font-semibold text-lg mb-4 flex items-center gap-2 text-slate-800 border-b pb-3">
                         <Activity className="w-5 h-5 text-amber-500" />
-                        Full Workout Strategy
+                        Full Workout Routine
                       </h3>
-                      <ul className="space-y-3">
-                        {workouts.map((workout, idx) => (
-                          <li key={idx} className="flex gap-3 text-sm text-slate-700">
-                            <div className="mt-1 shrink-0 w-1.5 h-1.5 rounded-full bg-amber-400" />
-                            <span>{workout}</span>
-                          </li>
-                        ))}
-                      </ul>
+                      
+                      <div className="mb-5">
+                         <span className="text-xs font-bold text-amber-600 uppercase mb-2 block">General Strategy</span>
+                         <ul className="space-y-2">
+                           {workouts.strategy.map((workout, idx) => (
+                             <li key={idx} className="flex gap-2 text-sm text-slate-700">
+                               <div className="mt-1.5 shrink-0 w-1.5 h-1.5 rounded-full bg-amber-400" />
+                               <span>{workout}</span>
+                             </li>
+                           ))}
+                         </ul>
+                      </div>
+
+                      <div>
+                         <span className="text-xs font-bold text-slate-500 uppercase mb-3 block">7-Day Plan</span>
+                         <div className="space-y-3">
+                           {workouts.daily.map((w, idx) => (
+                              <div key={idx} className="flex items-start gap-3 bg-slate-50 p-3 rounded-xl border border-slate-100">
+                                <div className="bg-white border border-slate-200 text-slate-600 font-bold text-xs w-12 h-12 flex flex-col items-center justify-center rounded-lg shrink-0">
+                                   <span>Day</span>
+                                   <span className="text-lg leading-none">{idx + 1}</span>
+                                </div>
+                                <div className="mt-1">
+                                   <p className="text-sm font-medium text-slate-800">{w}</p>
+                                </div>
+                              </div>
+                           ))}
+                         </div>
+                      </div>
                     </div>
 
                     <div>

@@ -1,0 +1,449 @@
+1:export type Phase = 'Menstrual' | 'Follicular' | 'Ovulation' | 'Luteal' | 'Perimenopause' | 'Menopause' | 'Pregnancy - Trimester 1' | 'Pregnancy - Trimester 2' | 'Pregnancy - Trimester 3' | 'Postpartum';
+2:export type Location = 'East Africa' | 'West Africa' | 'Europe/USA' | 'Global';
+3:export type UserMode = 'Cycle Sync' | 'PCOS' | 'Perimenopause' | 'Menopause' | 'Pregnancy' | 'Postpartum';
+4:export type CycleType = 'Regular' | 'Irregular - Long' | 'Irregular - Short' | 'Missing';
+5:
+6:export interface CycleData {
+7:  phase: Phase;
+8:  description: string;
+9:}
+10:
+11:export function getPhase(day: number, mode: UserMode = 'Cycle Sync', cycleType: CycleType = 'Regular', pregnancyWeek: number = 1): CycleData {
+12:  if (mode === 'Pregnancy') {
+13:    if (pregnancyWeek <= 13) {
+14:      return { phase: 'Pregnancy - Trimester 1', description: `First Trimester (Week ${pregnancyWeek}): Focus on managing nausea, easy digestion, and folate-rich foods.` };
+15:    } else if (pregnancyWeek <= 26) {
+16:      return { phase: 'Pregnancy - Trimester 2', description: `Second Trimester (Week ${pregnancyWeek}): The 'honeymoon phase'. Energy may increase. Focus on iron and calcium for baby's growth.` };
+17:    } else {
+18:      return { phase: 'Pregnancy - Trimester 3', description: `Third Trimester (Week ${pregnancyWeek}): Preparing for birth. Focus on omega-3s, eating smaller frequent meals, and resting comfortably.` };
+19:    }
+20:  } else if (mode === 'Postpartum') {
+21:    return { phase: 'Postpartum', description: 'The fourth trimester and beyond. Emphasis on deep recovery, replenishment of nutrient stores, and gentle rebuilding.' };
+22:  } else if (mode === 'Menopause') {
+23:    return { phase: 'Menopause', description: 'Post-menopause focus. Prioritizing bone density, heart health, and hormone balance.' };
+24:  } else if (mode === 'Perimenopause') {
+25:    return { phase: 'Perimenopause', description: 'Navigating hormonal changes. Focus on stabilizing estrogen/progesterone, mood, and sleep.' };
+26:  }
+27:
+28:  if (cycleType === 'Missing') {
+29:    return { phase: 'Follicular', description: 'Amenorrhea/Missing Cycle: Focus on consistent nourishment, reducing stress, and syncing with lunar phases (New Moon = Menstrual, Full Moon = Ovulation) to encourage natural rhythm.' };
+30:  }
+31:
+32:  let phase: Phase;
+33:  let description = '';
+34:
+35:  if (day >= 1 && day <= 5) {
+36:    phase = 'Menstrual';
+37:    description = `Day ${day}: The shedding of the uterine lining. Energy is usually at its lowest.`;
+38:  } else if (day >= 6 && day <= 13) {
+39:    phase = 'Follicular';
+40:    description = `Day ${day}: Estrogen and testosterone rise. Energy levels increase and mood typically improves.`;
+41:  } else if (day >= 14 && day <= 16) {
+42:    phase = 'Ovulation';
+43:    description = `Day ${day}: An egg is released. Peak energy and communication skills.`;
+44:  } else {
+45:    phase = 'Luteal';
+46:    description = `Day ${day}: Progesterone rises. Energy winds down, preparing for the next cycle.`;
+47:  }
+48:
+49:  if (cycleType === 'Irregular - Long' && day > 16) {
+50:    description += ' Note: For long cycles, your Follicular phase (pre-ovulation) may be extended. Pay attention to ovulation signs (like cervical mucus changes).';
+51:  } else if (cycleType === 'Irregular - Short' && day > 16) {
+52:    description += ' Note: Short cycles often mean a shorter Luteal phase. Focus on foods and habits that support progesterone.';
+53:  }
+54:
+55:  return { phase, description };
+56:}
+57:
+58:export function getSeedCycling(day: number, mode: UserMode = 'Cycle Sync', cycleType: CycleType = 'Regular'): string {
+59:  if (mode === 'Pregnancy' || mode === 'Postpartum') {
+60:    return 'For pregnancy and postpartum, focus on a varied intake of seeds for general nourishment (omega-3s, magnesium, iron) rather than strict cyclical syncing. Chia, hemp, and flax are excellent choices.';
+61:  }
+62:
+63:  if (mode === 'Menopause' || mode === 'Perimenopause') {
+64:    return 'For perimenopause and menopause, you can sync with the lunar cycle (Flax/Pumpkin from New to Full Moon, Sesame/Sunflower from Full to New Moon), or simply enjoy 1-2 tbsp of a mix daily for general hormone and bone support.';
+65:  }
+66:
+67:  if (cycleType === 'Missing') {
+68:    return 'With a missing cycle, try seed cycling with the moon: Flax/Pumpkin seeds from New Moon to Full Moon, then switch to Sesame/Sunflower seeds from Full Moon to New Moon.';
+69:  }
+70:
+71:  if (day >= 1 && day <= 14) {
+72:    return 'Flax seeds & Pumpkin seeds (1-2 tbsp each daily). Helps balance estrogen.';
+73:  } else {
+74:    return 'Sesame seeds & Sunflower seeds (1-2 tbsp each daily). Helps stimulate progesterone.';
+75:  }
+76:}
+77:
+78:const foodDatabase: Record<Location, {carbs: string[], veganProteins: string[], animalProteins: string[], fats: string[], veggies: string[], fruits: string[]}> = {
+79:  'East Africa': {
+80:    carbs: ['Matooke', 'Millet', 'Posho (maize flour)', 'Sweet potatoes', 'Cassava'],
+81:    veganProteins: ['Beans', 'Groundnuts', 'Lentils', 'Peas'],
+82:    animalProteins: ['Tilapia', 'Eggs', 'Chicken', 'Beef'],
+83:    fats: ['Avocado', 'Groundnut paste', 'Coconut oil'],
+84:    veggies: ['Sukuma wiki', 'Dodo (amaranth leaves)', 'Tomatoes', 'Cabbage'],
+85:    fruits: ['Bananas', 'Mangoes', 'Papaya']
+86:  },
+87:  'West Africa': {
+88:    carbs: ['Yam', 'Plantain', 'Rice', 'Cassava', 'Fufu'],
+89:    veganProteins: ['Beans', 'Egusi', 'Bambara nuts', 'Lentils'],
+90:    animalProteins: ['Fish', 'Chicken', 'Goat meat', 'Eggs'],
+91:    fats: ['Red palm oil', 'Avocado', 'Groundnuts'],
+92:    veggies: ['Spinach', 'Okra', 'Bitter leaf', 'Tomatoes'],
+93:    fruits: ['Mangoes', 'Oranges', 'Pineapple']
+94:  },
+95:  'Europe/USA': {
+96:    carbs: ['Oats', 'Brown rice', 'Quinoa', 'Sweet potatoes', 'Whole wheat bread'],
+97:    veganProteins: ['Tofu', 'Lentils', 'Beans', 'Tempeh'],
+98:    animalProteins: ['Chicken', 'Eggs', 'Yogurt', 'Salmon'],
+99:    fats: ['Avocado', 'Olive oil', 'Almonds', 'Walnuts'],
+100:    veggies: ['Spinach', 'Kale', 'Broccoli', 'Bell peppers'],
+101:    fruits: ['Berries', 'Apples', 'Bananas']
+102:  },
+103:  'Global': {
+104:    carbs: ['Oats', 'Rice', 'Potatoes', 'Pasta'],
+105:    veganProteins: ['Beans', 'Lentils', 'Tofu', 'Chickpeas'],
+106:    animalProteins: ['Eggs', 'Chicken', 'Fish', 'Yogurt'],
+107:    fats: ['Nuts', 'Seeds', 'Avocado', 'Oil'],
+108:    veggies: ['Mixed vegetables', 'Greens', 'Carrots'],
+109:    fruits: ['Apples', 'Bananas', 'Oranges']
+110:  }
+111:};
+112:
+113:export interface MealsOptions {
+114:  breakfast: string[];
+115:  lunch: string[];
+116:  dinner: string[];
+117:  snack: string[];
+118:}
+119:
+120:export function getMeals(phase: Phase, location: Location, isPcos: boolean, isVegan: boolean = false): MealsOptions {
+121:  const foods = foodDatabase[location];
+122:  const proteins = isVegan ? foods.veganProteins : [foods.animalProteins[0], foods.veganProteins[0], foods.animalProteins[1] || foods.animalProteins[0], foods.veganProteins[1] || foods.veganProteins[0], foods.animalProteins[2] || foods.animalProteins[0]];
+123:  
+124:  let meals: MealsOptions = {
+125:    breakfast: [],
+126:    lunch: [],
+127:    dinner: [],
+128:    snack: []
+129:  };
+130:
+131:  const getCarb = (isPcos: boolean) => isPcos ? foods.carbs.filter(c => !['Posho (maize flour)', 'Rice', 'White bread', 'Pasta', 'Fufu'].includes(c)).slice(0, 2).join(' or ') : foods.carbs[0];
+132:
+133:  switch (phase) {
+134:    case 'Menstrual':
+135:      meals.breakfast = [
+136:        `Warm ${getCarb(isPcos)} porridge or bowl with ${foods.fruits[0]} + Iron-rich ${proteins[0]}.`,
+137:        `Comforting ${foods.carbs[1]} toast/bowl with ${foods.fats[0]} and a side of ${proteins[1] || proteins[0]}.`,
+138:        `Smoothie with ${foods.fruits[1]}, ${foods.veggies[0]}, and a handful of ${foods.fats[1] || foods.fats[0]}.`
+139:      ];
+140:      meals.lunch = [
+141:        `Nourishing stew with ${proteins[2] || proteins[0]}, ${foods.veggies[0]}, and a small portion of ${foods.carbs[1]}.`,
+142:        `Warm soup: ${foods.veggies[1]} and ${proteins[0]} with a side of ${foods.carbs[0]}.`,
+143:        `Light bowl with roasted ${foods.veggies[0]}, ${proteins[1] || proteins[0]}, and ${foods.fats[0]}.`
+144:      ];
+145:      meals.dinner = [
+146:        `Warm soup or curry with ${foods.veggies[1]}, ${proteins[1] || proteins[0]}.`,
+147:        `Slow-cooked ${proteins[0]} with ${foods.veggies[0]} over minimal ${foods.carbs[0]}.`,
+148:        `Comforting ${foods.carbs[1]} mash with rich ${proteins[2] || proteins[0]} and steamed ${foods.veggies[0]}.`
+149:      ];
+150:      meals.snack = [
+151:        `${foods.fruits[2] || foods.fruits[0]} with a handful of ${foods.fats[0]}.`,
+152:        `Small handful of ${foods.fats[1] || foods.fats[0]}.`,
+153:        `Warm herbal tea with a piece of ${foods.fruits[0]}.`
+154:      ];
+155:      break;
+156:    case 'Follicular':
+157:      meals.breakfast = [
+158:        `Energizing ${proteins[1] || proteins[0]} with ${foods.veggies[0]} and ${foods.carbs[0]}.`,
+159:        `Fresh ${foods.fruits[0]} and ${proteins[0]} balance bowl.`,
+160:        `Light ${getCarb(isPcos)} with ${proteins[2] || proteins[0]} and a splash of ${foods.fats[0]}.`
+161:      ];
+162:      meals.lunch = [
+163:        `Fresh salad or light bowl with ${foods.carbs[1]}, lean ${proteins[0]}, and ${foods.veggies[1]}.`,
+164:        `Vibrant ${foods.veggies[0]} stir-fry with ${proteins[1] || proteins[0]} and ${foods.fats[1] || foods.fats[0]}.`,
+165:        `${foods.carbs[0]} with a hearty serving of ${foods.veggies[0]} and ${proteins[0]}.`
+166:      ];
+167:      meals.dinner = [
+168:        `Stir-fry or light stew using ${proteins[2] || proteins[0]} and plenty of ${foods.veggies[0]}.`,
+169:        `Lean ${proteins[0]} pan-seared with ${foods.veggies[1]} and a little ${foods.carbs[1]}.`,
+170:        `Baked ${proteins[1] || proteins[0]} with roasted ${foods.veggies[0]}.`
+171:      ];
+172:      meals.snack = [
+173:        `Fresh ${foods.fruits[1]} with ${foods.fats[1] || foods.fats[0]}.`,
+174:        `${foods.fruits[0]} slices.`,
+175:        `Mixed seeds (${foods.fats[0]}) and ${foods.fruits[2] || foods.fruits[0]}.`
+176:      ];
+177:      break;
+178:    case 'Ovulation':
+179:      meals.breakfast = [
+180:        `Light ${foods.fruits[0]} smoothie or fruit bowl with ${foods.fats[0]}.`,
+181:        `Refreshing ${foods.veggies[0]} and ${foods.fruits[1]} juice with a side of ${proteins[0]}.`,
+182:        `${proteins[1] || proteins[0]} accompanied by light ${foods.fruits[0]}.`
+183:      ];
+184:      meals.lunch = [
+185:        `Raw or lightly cooked ${foods.veggies[0]} salad with ${proteins[1] || proteins[0]}.`,
+186:        `Cooling cucumber and ${foods.veggies[1]} bowl with ${proteins[0]} and ${foods.fats[0]}.`,
+187:        `Light ${foods.carbs[1]} pasta/salad tossed with ${proteins[2] || proteins[0]} and greens.`
+188:      ];
+189:      meals.dinner = [
+190:        `Light bowl/plate featuring ${foods.veggies[1]}, ${proteins[0]}, minimal ${foods.carbs[0]}.`,
+191:        `Grilled ${proteins[1] || proteins[0]} with a large portion of ${foods.veggies[0]}.`,
+192:        `Refreshing soup with ${foods.veggies[0]} and ${proteins[0]}.`
+193:      ];
+194:      meals.snack = [
+195:        `Fresh ${foods.fruits[2]} slices or handful of raw nuts.`,
+196:        `A small piece of ${foods.fruits[0]}.`,
+197:        `Handful of ${foods.fats[0]}.`
+198:      ];
+199:      break;
+200:    case 'Luteal':
+201:      meals.breakfast = [
+202:        `Warming ${getCarb(isPcos)} with ${foods.fats[0]} to stabilize blood sugar.`,
+203:        `Savory ${proteins[0]} bowl with cooked ${foods.veggies[0]} and ${foods.fats[1] || foods.fats[0]}.`,
+204:        `Hearty ${foods.carbs[1]} porridge topped with ${foods.fruits[0]} and ${foods.fats[0]}.`
+205:      ];
+206:      meals.lunch = [
+207:        `Grounding meal: ${foods.carbs[1]} with roasted/cooked ${foods.veggies[0]} and ${proteins[0]}.`,
+208:        `Rich stew with ${proteins[1] || proteins[0]}, ${foods.veggies[1]}, and root ${foods.carbs[0]}.`,
+209:        `Baked ${foods.carbs[0]} stuffed with ${proteins[0]} and topped with ${foods.fats[0]}.`
+210:      ];
+211:      meals.dinner = [
+212:        `Comforting stew/bake with ${foods.carbs[0]}, ${foods.veggies[1]}, and rich ${proteins[1] || proteins[0]}.`,
+213:        `Warm ${proteins[2] || proteins[0]} curry with ${foods.veggies[0]} and minimal ${foods.carbs[1]}.`,
+214:        `Slow-roasted ${proteins[0]} and root ${foods.veggies[0]} medley.`
+215:      ];
+216:      meals.snack = [
+217:        `${foods.fruits[0]} baked with cinnamon or ${foods.fats[0]}.`,
+218:        `Dark chocolate (if available) or small portion of ${foods.fats[1] || foods.fats[0]}.`,
+219:        `Warm ${foods.fruits[1]} compote.`
+220:      ];
+221:      break;
+222:    case 'Perimenopause':
+223:      meals.breakfast = [
+224:        `Calcium-rich morning: ${getCarb(isPcos)} with ${foods.fats[0]} and a side of ${proteins[2] || proteins[0]}.`,
+225:        `High-protein start: ${proteins[0]} with cooked ${foods.veggies[0]} and half a portion of ${foods.carbs[0]}.`,
+226:        `Phyto-boost: Smoothie with ${foods.fruits[0]}, ${foods.veggies[1]}, and ${foods.fats[0]}.`
+227:      ];
+228:      meals.lunch = [
+229:        `Phytoestrogen focus: ${foods.carbs[1]} with ${proteins[0]}, plenty of ${foods.veggies[0]}, and healthy fats.`,
+230:        `Cooling salad: ${foods.veggies[1]} base, ${proteins[1] || proteins[0]}, and ${foods.fats[0]} dressing.`,
+231:        `Balanced plate: Lean ${proteins[0]}, large serving of ${foods.veggies[0]}, and minimal ${foods.carbs[0]}.`
+232:      ];
+233:      meals.dinner = [
+234:        `Mood & sleep support: Light stew with ${foods.carbs[0]}, magnesium-rich ${foods.veggies[1]}, and lean ${proteins[1] || proteins[0]}.`,
+235:        `Omega-rich: ${proteins[2] || proteins[0]} baked with ${foods.veggies[0]} and ${foods.fats[0]}.`,
+236:        `Comforting & light: Warm ${foods.veggies[0]} soup with a side of ${proteins[0]}.`
+237:      ];
+238:      meals.snack = [
+239:        `Hydrating ${foods.fruits[1]} with cooling ${foods.fats[1] || foods.fats[0]}.`,
+240:        `${foods.fruits[0]} with a sprinkle of seeds (${foods.fats[0]}).`,
+241:        `Small handful of ${foods.fats[0]} to stabilize mood.`
+242:      ];
+243:      break;
+244:    case 'Menopause':
+245:      meals.breakfast = [
+246:        `Heart-healthy start: ${getCarb(isPcos)} topped with ${proteins[1] || proteins[0]} and ${foods.fruits[0]}.`,
+247:        `Bone-support bowl: ${proteins[0]} and ${foods.veggies[0]} with a drizzle of ${foods.fats[0]}.`,
+248:        `Light & fiber-rich: ${foods.fruits[1]} with ${proteins[2] || proteins[0]} and ${foods.fats[1] || foods.fats[0]}.`
+249:      ];
+250:      meals.lunch = [
+251:        `Bone density bowl: ${foods.carbs[1]} with high-quality ${proteins[0]}, ${foods.veggies[0]}, and olive/coconut oil.`,
+252:        `Protein-focused salad: Mixed ${foods.veggies[0]} and ${foods.veggies[1]} with ${proteins[1] || proteins[0]}.`,
+253:        `Hearty stew: Minimal ${foods.carbs[0]} with abundant ${foods.veggies[0]} and ${proteins[0]}.`
+254:      ];
+255:      meals.dinner = [
+256:        `Lean & green: Generous portion of ${foods.veggies[1]} with ${proteins[2] || proteins[0]} and minimal ${foods.carbs[0]}.`,
+257:        `Omega focus: ${foods.fats[0]} seasoned ${proteins[0]} with roasted ${foods.veggies[0]}.`,
+258:        `Light digestive bowl: Cooked ${foods.veggies[0]} and ${proteins[1] || proteins[0]}.`
+259:      ];
+260:      meals.snack = [
+261:        `Handful of mixed nuts/seeds (${foods.fats[0]}) with ${foods.fruits[2] || foods.fruits[0]}.`,
+262:        `Calcium boost: Small serving of ${proteins[2] || proteins[0]} or ${foods.fats[1] || foods.fats[0]}.`,
+263:        `Fresh ${foods.fruits[0]} to support hydration.`
+264:      ];
+265:      break;
+266:    case 'Pregnancy - Trimester 1':
+267:      meals.breakfast = [
+268:        `Easy digest: Toast with ${foods.fats[0]} and a piece of ${foods.fruits[1]}.`,
+269:        `Ginger & fruit smoothie: ${foods.fruits[0]}, ginger, and ${proteins[0]} (if tolerated).`,
+270:        `Comforting porridge (${getCarb(isPcos)}) with a drizzle of honey and ${foods.fats[0]}.`
+271:      ];
+272:      meals.lunch = [
+273:        `Mild soup: Clear broth with ${foods.veggies[0]} and easy-to-digest ${foods.carbs[0]}.`,
+274:        `Simple crackers/bread (${foods.carbs[1]}) with small portions of ${proteins[1] || proteins[0]}.`,
+275:        `Baked ${foods.carbs[0]} with a spread of ${foods.fats[0]} to settle the stomach.`
+276:      ];
+277:      meals.dinner = [
+278:        `Light bowl: Plain ${foods.carbs[0]} with steamed ${foods.veggies[0]} and lean ${proteins[0]}.`,
+279:        `Nourishing broth with ${proteins[2] || proteins[0]} and soft cooked carrots.`,
+280:        `Gentle protein: Baked ${proteins[0]} with a side of ${foods.carbs[1]}.`
+281:      ];
+282:      meals.snack = [
+283:        `Dry crackers or light ${foods.carbs[1]} upon waking up.`,
+284:        `${foods.fruits[0]} or a few nuts (${foods.fats[0]}) if hungry.`,
+285:        `Ginger tea or plain water infused with ${foods.fruits[1]}.`
+286:      ];
+287:      break;
+288:    case 'Pregnancy - Trimester 2':
+289:      meals.breakfast = [
+290:        `Nourishing start: ${getCarb(isPcos)} with ${foods.fats[0]} and a side of well-cooked ${proteins[2] || proteins[0]}.`,
+291:        `High-protein folate boost: ${proteins[0]} with cooked ${foods.veggies[0]} and half a portion of ${foods.carbs[0]}.`,
+292:        `Energizing bowl: ${foods.fruits[0]} and ${foods.fats[1] || foods.fats[0]} with a boost of ${proteins[0]}.`
+293:      ];
+294:      meals.lunch = [
+295:        `Iron & vitamin C focus: ${foods.veggies[1]} base, ${proteins[1] || proteins[0]}, and citrus or ${foods.fruits[2] || foods.fruits[0]}.`,
+296:        `Balanced plate: Lean ${proteins[0]}, large serving of cooked ${foods.veggies[0]}, and ${foods.carbs[0]}.`,
+297:        `Hearty stew: ${foods.carbs[1]} paired with ${proteins[2] || proteins[0]} and cooked ${foods.veggies[0]}.`
+298:      ];
+299:      meals.dinner = [
+300:        `Bone & tissue support: Comforting stew with ${foods.carbs[0]}, ${foods.veggies[1]}, and ${proteins[1] || proteins[0]}.`,
+301:        `Calcium rich dinner: ${proteins[0]} baked with dark leafy ${foods.veggies[0]} and ${foods.fats[0]}.`,
+302:        `Easy digest warm meal: ${foods.veggies[0]} curry with ${proteins[0]} and ${foods.carbs[1]}.`
+303:      ];
+304:      meals.snack = [
+305:        `Hydrating ${foods.fruits[1]} with cooling ${foods.fats[1] || foods.fats[0]}.`,
+306:        `Calcium boost: ${foods.fats[0]} or calcium rich alternative.`,
+307:        `Small handful of walnuts/almonds (${foods.fats[0]}).`
+308:      ];
+309:      break;
+310:    case 'Pregnancy - Trimester 3':
+311:      meals.breakfast = [
+312:        `Energy sustaining: Smaller portion of ${getCarb(isPcos)} with ${foods.fats[0]} and ${proteins[0]} to avoid heartburn.`,
+313:        `Gentle smoothie: ${foods.fruits[0]}, ${foods.veggies[1]}, and nut butter (${foods.fats[0]}).`,
+314:        `Protein-rich mini meal: ${proteins[1] || proteins[0]} and a piece of ${foods.fruits[1]}.`
+315:      ];
+316:      meals.lunch = [
+317:        `Frequent small meals: ${foods.carbs[1]} with ${proteins[0]}, and well-cooked ${foods.veggies[0]}.`,
+318:        `Omega-rich: ${proteins[2] || proteins[0]} with ${foods.veggies[1]} and a drizzle of ${foods.fats[0]}.`,
+319:        `Light soup with ${foods.veggies[0]} and ${proteins[0]}.`
+320:      ];
+321:      meals.dinner = [
+322:        `Comforting & light: Small portion of ${foods.carbs[0]}, ${foods.veggies[1]}, and ${proteins[1] || proteins[0]}.`,
+323:        `Heartburn friendly: Baked ${proteins[0]} with steamed ${foods.veggies[0]} and ${foods.fats[0]}.`,
+324:        `Easy digest broth with a side of ${proteins[2] || proteins[0]}.`
+325:      ];
+326:      meals.snack = [
+327:        `Energy bites: Dates (${foods.fruits[0]}) with nut butter (${foods.fats[0]}) for birth prep.`,
+328:        `Hydration focus: Water-rich ${foods.fruits[1]} and a small portion of ${foods.fats[1] || foods.fats[0]}.`,
+329:        `Small frequent portions of ${foods.fruits[0]} to maintain blood sugar.`
+330:      ];
+331:      break;
+332:    case 'Postpartum':
+333:      meals.breakfast = [
+334:        `Warming & replenishing: Warm ${getCarb(isPcos)} porridge with ${foods.fats[0]} and ${proteins[1] || proteins[0]}.`,
+335:        `Tissue repair: Broth-based meal or ${proteins[0]} with cooked ${foods.veggies[0]} and ${foods.carbs[1]}.`,
+336:        `Lactation support (if nursing): Oats/porridge with ${foods.fruits[1]} and mixed seeds/nuts.`
+337:      ];
+338:      meals.lunch = [
+339:        `Deep nourishment: Rich stew with ${foods.carbs[1]}, iron-rich ${proteins[0]}, and cooked ${foods.veggies[0]}.`,
+340:        `Recovery bowl: Warm root veg (${foods.carbs[0]}), ${proteins[1] || proteins[0]}, and ${foods.fats[0]} dressing.`,
+341:        `Energy sustaining: Hearty soup with ${proteins[0]}, ${foods.veggies[0]}, and ${foods.carbs[0]}.`
+342:      ];
+343:      meals.dinner = [
+344:        `Blood building: Slow-cooked ${proteins[1] || proteins[0]} with magnesium-rich ${foods.veggies[1]} and ${foods.carbs[0]}.`,
+345:        `Comforting & grounding: ${proteins[2] || proteins[0]} baked with ${foods.veggies[0]} and healthy ${foods.fats[0]}.`,
+346:        `Easy to digest: Bone/veg broth with soft ${foods.veggies[0]} and a side of ${proteins[0]}.`
+347:      ];
+348:      meals.snack = [
+349:        `Energy bites: Dates (${foods.fruits[0]}) with nut butter (${foods.fats[0]}).`,
+350:        `Hydration focus: Water-rich ${foods.fruits[1]} and a small portion of ${foods.fats[1] || foods.fats[0]}.`,
+351:        `Protein top-up: Small serving of ${proteins[2] || proteins[0]} or mixed nuts.`
+352:      ];
+353:      break;
+354:  }
+355:  
+356:  if (isPcos) {
+357:      meals.breakfast = meals.breakfast.map(m => m + ` *ensure high protein to stabilize insulin*.`);
+358:  }
+359:
+360:  return meals;
+361:}
+362:
+363:export function getWorkouts(phase: Phase, isPcos: boolean): string[] {
+364:  let workouts = [];
+365:  
+366:  if (isPcos) {
+367:      workouts.push('Aim for low-impact consistency to avoid cortisol spikes.');
+368:  }
+369:
+370:  switch (phase) {
+371:    case 'Menstrual':
+372:      workouts.push('Rest, Light Yoga, Slow Walking, Stretching.');
+373:      break;
+374:    case 'Follicular':
+375:      workouts.push('Strength Training, Running, Dance, Higher energy movement.');
+376:      if (isPcos) workouts.push('Slow-weighted strength training is excellent.');
+377:      break;
+378:    case 'Ovulation':
+379:      workouts.push('HIIT, Spin class, Group fitness, High energy output.');
+380:      if (isPcos) workouts.push('Keep HIIT under 30 minutes to manage cortisol.');
+381:      break;
+382:    case 'Luteal':
+383:      workouts.push('Pilates, Yoga, Swimming, Walking, Lower intensity strength.');
+384:      break;
+385:    case 'Perimenopause':
+386:      workouts.push('Strength training for bone density (2-3x a week).');
+387:      workouts.push('Restorative Yoga to manage stress and cortisol.');
+388:      workouts.push('Walking or light cardio to support cardiovascular health.');
+389:      break;
+390:    case 'Menopause':
+391:      workouts.push('Weight-bearing exercises for preserving bone density.');
+392:      workouts.push('Mobility and balance work to maintain joint health.');
+393:      workouts.push('Consistent low-to-moderate impact cardio (walking, swimming).');
+394:      break;
+395:    case 'Pregnancy - Trimester 1':
+396:      workouts.push('Listen to your body. Rest is crucial during the first trimester.');
+397:      workouts.push('Gentle stretching and short, light walks to ease nausea.');
+398:      workouts.push('Always consult with your healthcare provider for pregnancy-safe exercises.');
+399:      break;
+400:    case 'Pregnancy - Trimester 2':
+401:      workouts.push('Prenatal Yoga or Pilates class tailored for pregnancy.');
+402:      workouts.push('Swimming or steady-state walking to boost energy and circulation.');
+403:      workouts.push('Light strength training targeting the back and glutes for posture support.');
+404:      break;
+405:    case 'Pregnancy - Trimester 3':
+406:      workouts.push('Pelvic floor awareness and deep breathing techniques for birth prep.');
+407:      workouts.push('Very gentle, short walks. Avoid standing for extended periods.');
+408:      workouts.push('Birthing ball exercises and hip opening stretches (with provider approval).');
+409:      break;
+410:    case 'Postpartum':
+411:      workouts.push('Prioritize deep rest and physical recovery initially.');
+412:      workouts.push('Gentle pelvic floor rehab and breathing exercises.');
+413:      workouts.push('Short, slow walks once cleared by a healthcare provider.');
+414:      break;
+415:  }
+416:  
+417:  return workouts;
+418:}
+419:
+420:export function getShoppingList(phase: Phase, location: Location, isPcos: boolean, isVegan: boolean = false): string[] {
+421:  const foods = foodDatabase[location];
+422:  const proteins = isVegan ? foods.veganProteins : [foods.animalProteins[0], foods.veganProteins[0], foods.animalProteins[1] || foods.animalProteins[0]];
+423:
+424:  let list = [
+425:    ...foods.veggies.slice(0, 2),
+426:    ...proteins.slice(0, 2),
+427:    ...foods.fats.slice(0, 2),
+428:  ];
+429:  
+430:  if (!isPcos) {
+431:      list.push(...foods.carbs.slice(0, 2));
+432:      list.push(...foods.fruits.slice(0, 2));
+433:  } else {
+434:      list.push(foods.carbs[0]); // Less carbs
+435:      list.push(foods.fruits[0]); // Less sugar
+436:      list.push('Extra Green Veggies');
+437:  }
+438:
+439:  if (phase === 'Menstrual' || phase === 'Follicular') {
+440:      list.push('Flax seeds', 'Pumpkin seeds');
+441:  } else if (phase === 'Luteal' || phase === 'Ovulation') {
+442:      list.push('Sesame seeds', 'Sunflower seeds');
+443:  } else {
+444:      list.push('Mixed seeds (Flax, Pumpkin, Sesame, Sunflower)');
+445:      list.push('Calcium-rich leafy greens');
+446:  }
+447:
+448:  return [...new Set(list)]; // unique items
+449:}

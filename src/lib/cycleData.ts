@@ -360,61 +360,157 @@ export function getMeals(phase: Phase, location: Location, isPcos: boolean, isVe
   return meals;
 }
 
-export function getWorkouts(phase: Phase, isPcos: boolean): string[] {
-  let workouts = [];
+export interface WorkoutPlan {
+  strategy: string[];
+  daily: string[];
+}
+
+export function getWorkouts(phase: Phase, isPcos: boolean): WorkoutPlan {
+  let strategy: string[] = [];
+  let daily: string[] = [];
   
   if (isPcos) {
-      workouts.push('Aim for low-impact consistency to avoid cortisol spikes.');
+      strategy.push('Aim for low-impact consistency to avoid cortisol spikes.');
   }
 
   switch (phase) {
     case 'Menstrual':
-      workouts.push('Rest, Light Yoga, Slow Walking, Stretching.');
+      strategy.push('Rest, Light Yoga, Slow Walking, Stretching.');
+      daily = [
+        'Rest & Recovery - Focus on deep breathing',
+        'Light Yoga or stretching (15-20 mins)',
+        'Slow walking (20 mins)',
+        'Rest - Focus on hydration',
+        'Gentle mat Pilates or stretching',
+        'Leisurely walk in nature',
+        'Rest or foam rolling'
+      ];
       break;
     case 'Follicular':
-      workouts.push('Strength Training, Running, Dance, Higher energy movement.');
-      if (isPcos) workouts.push('Slow-weighted strength training is excellent.');
+      strategy.push('Strength Training, Running, Dance, Higher energy movement.');
+      if (isPcos) strategy.push('Slow-weighted strength training is excellent.');
+      daily = [
+        isPcos ? 'Brisk walking (30 mins)' : 'Light Jog or brisk walking (30 mins)',
+        'Upper body strength training',
+        isPcos ? 'Moderate cycling (30 mins)' : 'Dance cardio or Zumba (30-45 mins)',
+        'Active recovery or Yoga',
+        'Lower body strength training',
+        'Cycling or swimming',
+        'Rest or casual walk'
+      ];
       break;
     case 'Ovulation':
-      workouts.push('HIIT, Spin class, Group fitness, High energy output.');
-      if (isPcos) workouts.push('Keep HIIT under 30 minutes to manage cortisol.');
+      strategy.push('HIIT, Spin class, Group fitness, High energy output.');
+      if (isPcos) strategy.push('Keep HIIT under 30 minutes to manage cortisol.');
+      daily = [
+        isPcos ? 'Moderate HIIT (15 mins) + Walk' : 'HIIT or High-Intensity Cardio',
+        'Full body strength & conditioning',
+        'Spin class or vigorous cycling',
+        'Active recovery row/swim',
+        'Power Yoga or Pilates',
+        isPcos ? 'Brisk Walk' : 'Sprints or challenging hike',
+        'Rest'
+      ];
       break;
     case 'Luteal':
-      workouts.push('Pilates, Yoga, Swimming, Walking, Lower intensity strength.');
+      strategy.push('Pilates, Yoga, Swimming, Walking, Lower intensity strength.');
+      daily = [
+        'Moderate strength training',
+        'Pilates (30-45 mins)',
+        'Brisk walk or light jog',
+        'Mobility and core work',
+        'Swimming or cycling at moderate pace',
+        'Vinyasa Yoga',
+        'Rest or light stretching'
+      ];
       break;
     case 'Perimenopause':
-      workouts.push('Strength training for bone density (2-3x a week).');
-      workouts.push('Restorative Yoga to manage stress and cortisol.');
-      workouts.push('Walking or light cardio to support cardiovascular health.');
+      strategy.push('Strength training for bone density (2-3x a week).');
+      strategy.push('Restorative Yoga to manage stress and cortisol.');
+      strategy.push('Walking or light cardio to support cardiovascular health.');
+      daily = [
+        'Weight-bearing strength (Full body)',
+        'Walking or light cardio (30 mins)',
+        'Restorative Yoga',
+        'Weight-bearing strength (Lower body)',
+        'Swimming or cycling',
+        'Mobility work & light core',
+        'Rest'
+      ];
       break;
     case 'Menopause':
-      workouts.push('Weight-bearing exercises for preserving bone density.');
-      workouts.push('Mobility and balance work to maintain joint health.');
-      workouts.push('Consistent low-to-moderate impact cardio (walking, swimming).');
+      strategy.push('Weight-bearing exercises for preserving bone density.');
+      strategy.push('Mobility and balance work to maintain joint health.');
+      strategy.push('Consistent low-to-moderate impact cardio (walking, swimming).');
+      daily = [
+        'Low-impact walking (30-40 mins)',
+        'Weight-bearing strength (Upper body)',
+        'Balance and mobility work',
+        'Swimming or water aerobics',
+        'Weight-bearing strength (Lower body)',
+        'Gentle Yoga or stretching',
+        'Rest'
+      ];
       break;
     case 'Pregnancy - Trimester 1':
-      workouts.push('Listen to your body. Rest is crucial during the first trimester.');
-      workouts.push('Gentle stretching and short, light walks to ease nausea.');
-      workouts.push('Always consult with your healthcare provider for pregnancy-safe exercises.');
+      strategy.push('Listen to your body. Rest is crucial during the first trimester.');
+      strategy.push('Gentle stretching and short, light walks to ease nausea.');
+      strategy.push('Always consult with your healthcare provider for pregnancy-safe exercises.');
+      daily = [
+        'Gentle walk (15-20 mins, if feeling well)',
+        'Rest',
+        'Light stretching for back and hips',
+        'Gentle walk (15-20 mins)',
+        'Rest',
+        'Prenatal breathing exercises',
+        'Rest'
+      ];
       break;
     case 'Pregnancy - Trimester 2':
-      workouts.push('Prenatal Yoga or Pilates class tailored for pregnancy.');
-      workouts.push('Swimming or steady-state walking to boost energy and circulation.');
-      workouts.push('Light strength training targeting the back and glutes for posture support.');
+      strategy.push('Prenatal Yoga or Pilates class tailored for pregnancy.');
+      strategy.push('Swimming or steady-state walking to boost energy and circulation.');
+      strategy.push('Light strength training targeting the back and glutes for posture support.');
+      daily = [
+        'Steady-state walking (30 mins)',
+        'Prenatal Pilates or Yoga',
+        'Light strength (Back & Arms)',
+        'Swimming or water walking',
+        'Light strength (Glutes & Legs)',
+        'Mobility & gentle stretches',
+        'Rest'
+      ];
       break;
     case 'Pregnancy - Trimester 3':
-      workouts.push('Pelvic floor awareness and deep breathing techniques for birth prep.');
-      workouts.push('Very gentle, short walks. Avoid standing for extended periods.');
-      workouts.push('Birthing ball exercises and hip opening stretches (with provider approval).');
+      strategy.push('Pelvic floor awareness and deep breathing techniques for birth prep.');
+      strategy.push('Very gentle, short walks. Avoid standing for extended periods.');
+      strategy.push('Birthing ball exercises and hip opening stretches (with provider approval).');
+      daily = [
+        'Birthing ball stretches & deep breathing',
+        'Short gentle walk (15 mins)',
+        'Prenatal Yoga (Hip openers)',
+        'Rest & pelvic floor exercises',
+        'Short gentle walk (15 mins)',
+        'Birthing ball stretches',
+        'Rest'
+      ];
       break;
     case 'Postpartum':
-      workouts.push('Prioritize deep rest and physical recovery initially.');
-      workouts.push('Gentle pelvic floor rehab and breathing exercises.');
-      workouts.push('Short, slow walks once cleared by a healthcare provider.');
+      strategy.push('Prioritize deep rest and physical recovery initially.');
+      strategy.push('Gentle pelvic floor rehab and breathing exercises.');
+      strategy.push('Short, slow walks once cleared by a healthcare provider.');
+      daily = [
+        'Deep breathing & pelvic floor connection',
+        'Short slow walk (10-15 mins)',
+        'Gentle core restoration breathing',
+        'Short slow walk (10-15 mins)',
+        'Light upper body mobility',
+        'Deep breathing & pelvic floor connection',
+        'Rest'
+      ];
       break;
   }
   
-  return workouts;
+  return { strategy, daily };
 }
 
 export function getShoppingList(phase: Phase, location: Location, isPcos: boolean, isVegan: boolean = false): string[] {
