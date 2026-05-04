@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Calendar, MapPin, Activity, Leaf, ShoppingCart, Heart, Info, Sun, Lock, User, CheckCircle, ChevronRight, Share2, Mail } from 'lucide-react';
 import { getPhase, getMeals, getWorkouts, getShoppingList, getSeedCycling, Location, UserMode, CycleType } from './lib/cycleData';
 import PaymentModal from './components/PaymentModal';
+import AdSlot from './components/AdSlot';
 
 export default function App() {
   const [mode, setMode] = useState<UserMode>('Cycle Sync');
@@ -268,6 +269,14 @@ export default function App() {
           </div>
         </div>
       </div>
+      
+      {/* 
+        Ad Placement Rule: Non-premium informational pages/areas.
+        Must NOT appear in premium content. 
+      */}
+      {!hasPaid && (
+         <AdSlot zoneId="sidebar_ad_123" format="rectangle" />
+      )}
     </div>
   );
 
@@ -396,6 +405,9 @@ export default function App() {
                   </div>
                 </div>
               </div>
+              
+              {/* Ad Placement Rule: Free wellness tips section / Informational areas */}
+              <AdSlot zoneId="main_banner_456" format="banner" className="my-8" />
               
               <div className="bg-gradient-to-br from-indigo-600 via-purple-600 to-rose-600 p-8 rounded-3xl text-white text-center shadow-lg relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none" />
@@ -539,6 +551,16 @@ export default function App() {
 
         </div>
       </main>
+
+      {!hasPaid && (
+        <footer className="max-w-5xl mx-auto px-4 py-8 border-t border-slate-200 mt-8">
+           {/* Ad Placement Rule: Homepage footer */}
+           <AdSlot zoneId="footer_ad_789" format="banner" />
+           <p className="text-center text-sm text-slate-500 mt-6">
+             &copy; {new Date().getFullYear()} Women's Wellness App. For informational purposes only. Consult with a healthcare professional before changing your diet or exercise routine.
+           </p>
+        </footer>
+      )}
     </div>
   );
 }
