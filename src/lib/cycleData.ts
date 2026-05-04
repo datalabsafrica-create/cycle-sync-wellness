@@ -1,6 +1,6 @@
 export type Phase = 'Menstrual' | 'Follicular' | 'Ovulation' | 'Luteal' | 'Perimenopause' | 'Menopause' | 'Pregnancy - Trimester 1' | 'Pregnancy - Trimester 2' | 'Pregnancy - Trimester 3' | 'Postpartum';
 export type Location = 'East Africa' | 'West Africa' | 'Europe/USA' | 'Global';
-export type LifeStage = 'Menstruating' | 'Perimenopause' | 'Menopause' | 'Pregnancy' | 'Postpartum';
+export type UserMode = 'Cycle Sync' | 'PCOS' | 'Perimenopause' | 'Menopause' | 'Pregnancy' | 'Postpartum';
 export type CycleType = 'Regular' | 'Irregular - Long' | 'Irregular - Short' | 'Missing';
 
 export interface CycleData {
@@ -8,8 +8,8 @@ export interface CycleData {
   description: string;
 }
 
-export function getPhase(day: number, lifeStage: LifeStage = 'Menstruating', cycleType: CycleType = 'Regular', pregnancyWeek: number = 1): CycleData {
-  if (lifeStage === 'Pregnancy') {
+export function getPhase(day: number, mode: UserMode = 'Cycle Sync', cycleType: CycleType = 'Regular', pregnancyWeek: number = 1): CycleData {
+  if (mode === 'Pregnancy') {
     if (pregnancyWeek <= 13) {
       return { phase: 'Pregnancy - Trimester 1', description: `First Trimester (Week ${pregnancyWeek}): Focus on managing nausea, easy digestion, and folate-rich foods.` };
     } else if (pregnancyWeek <= 26) {
@@ -17,11 +17,11 @@ export function getPhase(day: number, lifeStage: LifeStage = 'Menstruating', cyc
     } else {
       return { phase: 'Pregnancy - Trimester 3', description: `Third Trimester (Week ${pregnancyWeek}): Preparing for birth. Focus on omega-3s, eating smaller frequent meals, and resting comfortably.` };
     }
-  } else if (lifeStage === 'Postpartum') {
+  } else if (mode === 'Postpartum') {
     return { phase: 'Postpartum', description: 'The fourth trimester and beyond. Emphasis on deep recovery, replenishment of nutrient stores, and gentle rebuilding.' };
-  } else if (lifeStage === 'Menopause') {
+  } else if (mode === 'Menopause') {
     return { phase: 'Menopause', description: 'Post-menopause focus. Prioritizing bone density, heart health, and hormone balance.' };
-  } else if (lifeStage === 'Perimenopause') {
+  } else if (mode === 'Perimenopause') {
     return { phase: 'Perimenopause', description: 'Navigating hormonal changes. Focus on stabilizing estrogen/progesterone, mood, and sleep.' };
   }
 
@@ -55,12 +55,12 @@ export function getPhase(day: number, lifeStage: LifeStage = 'Menstruating', cyc
   return { phase, description };
 }
 
-export function getSeedCycling(day: number, lifeStage: LifeStage = 'Menstruating', cycleType: CycleType = 'Regular'): string {
-  if (lifeStage === 'Pregnancy' || lifeStage === 'Postpartum') {
+export function getSeedCycling(day: number, mode: UserMode = 'Cycle Sync', cycleType: CycleType = 'Regular'): string {
+  if (mode === 'Pregnancy' || mode === 'Postpartum') {
     return 'For pregnancy and postpartum, focus on a varied intake of seeds for general nourishment (omega-3s, magnesium, iron) rather than strict cyclical syncing. Chia, hemp, and flax are excellent choices.';
   }
 
-  if (lifeStage === 'Menopause' || lifeStage === 'Perimenopause') {
+  if (mode === 'Menopause' || mode === 'Perimenopause') {
     return 'For perimenopause and menopause, you can sync with the lunar cycle (Flax/Pumpkin from New to Full Moon, Sesame/Sunflower from Full to New Moon), or simply enjoy 1-2 tbsp of a mix daily for general hormone and bone support.';
   }
 
