@@ -543,3 +543,66 @@ export function getShoppingList(phase: Phase, location: Location, isPcos: boolea
 
   return [...new Set(list)]; // unique items
 }
+
+export function getHydration(phase: Phase, isPcos: boolean): string[] {
+  let hydrationDesc = [];
+  
+  if (isPcos) {
+      hydrationDesc.push('Emphasize spearmint tea and apple cider vinegar in water to help manage insulin and free testosterone.');
+  }
+
+  switch (phase) {
+    case 'Menstrual':
+      hydrationDesc.push('Warm and soothing: Peppermint or ginger tea for cramps.');
+      hydrationDesc.push('Hot water with lemon and a dash of turmeric for inflammation.');
+      hydrationDesc.push('Raspberry leaf tea to support the uterus.');
+      break;
+    case 'Follicular':
+      hydrationDesc.push('Energizing and fresh: Green tea (contains L-theanine for focused energy) or matcha if tolerated.');
+      hydrationDesc.push('Oat straw infusion or nettle tea for replenishing minerals.');
+      hydrationDesc.push('Fresh green juices (celery, cucumber, green apple) for cellular hydration.');
+      break;
+    case 'Ovulation':
+      hydrationDesc.push('Cooling and vibrant: Hibiscus or iced peppermint tea.');
+      hydrationDesc.push('Coconut water for electrolyte balance after high energy workouts.');
+      hydrationDesc.push('Water infused with citrus (lemon, lime, grapefruit) and mint.');
+      break;
+    case 'Luteal':
+      hydrationDesc.push('Grounding and stabilizing: Dandelion root tea (supports liver detox and reduces bloating).');
+      hydrationDesc.push('Chamomile or lemon balm tea to promote calm and stabilize mood.');
+      hydrationDesc.push('Bone broth or vegetable mineral broth for deep nourishment.');
+      break;
+    case 'Perimenopause':
+      hydrationDesc.push('Cooling herbs: Sage or hibiscus tea to help manage hot flashes.');
+      hydrationDesc.push('Tulsi (Holy Basil) tea to support the nervous system and manage cortisol.');
+      hydrationDesc.push('Avoid excess caffeine; opt for decaf green tea or robust herbal blends.');
+      break;
+    case 'Menopause':
+      hydrationDesc.push('Bone-supportive infusions: Nettle, oat straw, and red clover.');
+      hydrationDesc.push('Hydrate generously with water and a pinch of Celtic sea salt for cellular hydration.');
+      hydrationDesc.push('Golden milk (turmeric latte) before bed for joint health and inflammation.');
+      break;
+    case 'Pregnancy - Trimester 1':
+      hydrationDesc.push('Nausea support: Ginger or peppermint tea (served warm or iced).');
+      hydrationDesc.push('Sip on water with fresh lime or lemon throughout the day to settle the stomach.');
+      hydrationDesc.push('Avoid large gulps; take small, frequent sips to maintain hydration.');
+      break;
+    case 'Pregnancy - Trimester 2':
+      hydrationDesc.push('Mineral rich: Red raspberry leaf tea (consult provider first) and nettle tea.');
+      hydrationDesc.push('Coconut water or water with a splash of 100% cranberry juice for urinary tract health.');
+      hydrationDesc.push('Sparkling water with fresh fruit slices for a refreshing change.');
+      break;
+    case 'Pregnancy - Trimester 3':
+      hydrationDesc.push('Birth prep: Red raspberry leaf tea (often increased in third trimester, ask provider).');
+      hydrationDesc.push('Date seed coffee alternative or dandelion blend for grounded energy without caffeine.');
+      hydrationDesc.push('Electrolyte water to stay optimally hydrated for circulation and cell expansion.');
+      break;
+    case 'Postpartum':
+      hydrationDesc.push('Warming and rebuilding: Bone broth, chicken broth, or rich vegetable broths.');
+      hydrationDesc.push('Lactation support (if nursing): Fennel, fenugreek, or specialized mother\'s milk teas.');
+      hydrationDesc.push('Room temperature or warm water with a squeeze of citrus to aid digestion.');
+      break;
+  }
+  
+  return hydrationDesc;
+}

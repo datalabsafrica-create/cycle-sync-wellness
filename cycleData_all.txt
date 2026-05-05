@@ -360,90 +360,186 @@
 360:  return meals;
 361:}
 362:
-363:export function getWorkouts(phase: Phase, isPcos: boolean): string[] {
-364:  let workouts = [];
-365:  
-366:  if (isPcos) {
-367:      workouts.push('Aim for low-impact consistency to avoid cortisol spikes.');
-368:  }
-369:
-370:  switch (phase) {
-371:    case 'Menstrual':
-372:      workouts.push('Rest, Light Yoga, Slow Walking, Stretching.');
-373:      break;
-374:    case 'Follicular':
-375:      workouts.push('Strength Training, Running, Dance, Higher energy movement.');
-376:      if (isPcos) workouts.push('Slow-weighted strength training is excellent.');
-377:      break;
-378:    case 'Ovulation':
-379:      workouts.push('HIIT, Spin class, Group fitness, High energy output.');
-380:      if (isPcos) workouts.push('Keep HIIT under 30 minutes to manage cortisol.');
-381:      break;
-382:    case 'Luteal':
-383:      workouts.push('Pilates, Yoga, Swimming, Walking, Lower intensity strength.');
-384:      break;
-385:    case 'Perimenopause':
-386:      workouts.push('Strength training for bone density (2-3x a week).');
-387:      workouts.push('Restorative Yoga to manage stress and cortisol.');
-388:      workouts.push('Walking or light cardio to support cardiovascular health.');
-389:      break;
-390:    case 'Menopause':
-391:      workouts.push('Weight-bearing exercises for preserving bone density.');
-392:      workouts.push('Mobility and balance work to maintain joint health.');
-393:      workouts.push('Consistent low-to-moderate impact cardio (walking, swimming).');
-394:      break;
-395:    case 'Pregnancy - Trimester 1':
-396:      workouts.push('Listen to your body. Rest is crucial during the first trimester.');
-397:      workouts.push('Gentle stretching and short, light walks to ease nausea.');
-398:      workouts.push('Always consult with your healthcare provider for pregnancy-safe exercises.');
-399:      break;
-400:    case 'Pregnancy - Trimester 2':
-401:      workouts.push('Prenatal Yoga or Pilates class tailored for pregnancy.');
-402:      workouts.push('Swimming or steady-state walking to boost energy and circulation.');
-403:      workouts.push('Light strength training targeting the back and glutes for posture support.');
-404:      break;
-405:    case 'Pregnancy - Trimester 3':
-406:      workouts.push('Pelvic floor awareness and deep breathing techniques for birth prep.');
-407:      workouts.push('Very gentle, short walks. Avoid standing for extended periods.');
-408:      workouts.push('Birthing ball exercises and hip opening stretches (with provider approval).');
-409:      break;
-410:    case 'Postpartum':
-411:      workouts.push('Prioritize deep rest and physical recovery initially.');
-412:      workouts.push('Gentle pelvic floor rehab and breathing exercises.');
-413:      workouts.push('Short, slow walks once cleared by a healthcare provider.');
+363:export interface WorkoutPlan {
+364:  strategy: string[];
+365:  daily: string[];
+366:}
+367:
+368:export function getWorkouts(phase: Phase, isPcos: boolean): WorkoutPlan {
+369:  let strategy: string[] = [];
+370:  let daily: string[] = [];
+371:  
+372:  if (isPcos) {
+373:      strategy.push('Aim for low-impact consistency to avoid cortisol spikes.');
+374:  }
+375:
+376:  switch (phase) {
+377:    case 'Menstrual':
+378:      strategy.push('Rest, Light Yoga, Slow Walking, Stretching.');
+379:      daily = [
+380:        'Rest & Recovery - Focus on deep breathing',
+381:        'Light Yoga or stretching (15-20 mins)',
+382:        'Slow walking (20 mins)',
+383:        'Rest - Focus on hydration',
+384:        'Gentle mat Pilates or stretching',
+385:        'Leisurely walk in nature',
+386:        'Rest or foam rolling'
+387:      ];
+388:      break;
+389:    case 'Follicular':
+390:      strategy.push('Strength Training, Running, Dance, Higher energy movement.');
+391:      if (isPcos) strategy.push('Slow-weighted strength training is excellent.');
+392:      daily = [
+393:        isPcos ? 'Brisk walking (30 mins)' : 'Light Jog or brisk walking (30 mins)',
+394:        'Upper body strength training',
+395:        isPcos ? 'Moderate cycling (30 mins)' : 'Dance cardio or Zumba (30-45 mins)',
+396:        'Active recovery or Yoga',
+397:        'Lower body strength training',
+398:        'Cycling or swimming',
+399:        'Rest or casual walk'
+400:      ];
+401:      break;
+402:    case 'Ovulation':
+403:      strategy.push('HIIT, Spin class, Group fitness, High energy output.');
+404:      if (isPcos) strategy.push('Keep HIIT under 30 minutes to manage cortisol.');
+405:      daily = [
+406:        isPcos ? 'Moderate HIIT (15 mins) + Walk' : 'HIIT or High-Intensity Cardio',
+407:        'Full body strength & conditioning',
+408:        'Spin class or vigorous cycling',
+409:        'Active recovery row/swim',
+410:        'Power Yoga or Pilates',
+411:        isPcos ? 'Brisk Walk' : 'Sprints or challenging hike',
+412:        'Rest'
+413:      ];
 414:      break;
-415:  }
-416:  
-417:  return workouts;
-418:}
-419:
-420:export function getShoppingList(phase: Phase, location: Location, isPcos: boolean, isVegan: boolean = false): string[] {
-421:  const foods = foodDatabase[location];
-422:  const proteins = isVegan ? foods.veganProteins : [foods.animalProteins[0], foods.veganProteins[0], foods.animalProteins[1] || foods.animalProteins[0]];
-423:
-424:  let list = [
-425:    ...foods.veggies.slice(0, 2),
-426:    ...proteins.slice(0, 2),
-427:    ...foods.fats.slice(0, 2),
-428:  ];
-429:  
-430:  if (!isPcos) {
-431:      list.push(...foods.carbs.slice(0, 2));
-432:      list.push(...foods.fruits.slice(0, 2));
-433:  } else {
-434:      list.push(foods.carbs[0]); // Less carbs
-435:      list.push(foods.fruits[0]); // Less sugar
-436:      list.push('Extra Green Veggies');
-437:  }
-438:
-439:  if (phase === 'Menstrual' || phase === 'Follicular') {
-440:      list.push('Flax seeds', 'Pumpkin seeds');
-441:  } else if (phase === 'Luteal' || phase === 'Ovulation') {
-442:      list.push('Sesame seeds', 'Sunflower seeds');
-443:  } else {
-444:      list.push('Mixed seeds (Flax, Pumpkin, Sesame, Sunflower)');
-445:      list.push('Calcium-rich leafy greens');
-446:  }
-447:
-448:  return [...new Set(list)]; // unique items
-449:}
+415:    case 'Luteal':
+416:      strategy.push('Pilates, Yoga, Swimming, Walking, Lower intensity strength.');
+417:      daily = [
+418:        'Moderate strength training',
+419:        'Pilates (30-45 mins)',
+420:        'Brisk walk or light jog',
+421:        'Mobility and core work',
+422:        'Swimming or cycling at moderate pace',
+423:        'Vinyasa Yoga',
+424:        'Rest or light stretching'
+425:      ];
+426:      break;
+427:    case 'Perimenopause':
+428:      strategy.push('Strength training for bone density (2-3x a week).');
+429:      strategy.push('Restorative Yoga to manage stress and cortisol.');
+430:      strategy.push('Walking or light cardio to support cardiovascular health.');
+431:      daily = [
+432:        'Weight-bearing strength (Full body)',
+433:        'Walking or light cardio (30 mins)',
+434:        'Restorative Yoga',
+435:        'Weight-bearing strength (Lower body)',
+436:        'Swimming or cycling',
+437:        'Mobility work & light core',
+438:        'Rest'
+439:      ];
+440:      break;
+441:    case 'Menopause':
+442:      strategy.push('Weight-bearing exercises for preserving bone density.');
+443:      strategy.push('Mobility and balance work to maintain joint health.');
+444:      strategy.push('Consistent low-to-moderate impact cardio (walking, swimming).');
+445:      daily = [
+446:        'Low-impact walking (30-40 mins)',
+447:        'Weight-bearing strength (Upper body)',
+448:        'Balance and mobility work',
+449:        'Swimming or water aerobics',
+450:        'Weight-bearing strength (Lower body)',
+451:        'Gentle Yoga or stretching',
+452:        'Rest'
+453:      ];
+454:      break;
+455:    case 'Pregnancy - Trimester 1':
+456:      strategy.push('Listen to your body. Rest is crucial during the first trimester.');
+457:      strategy.push('Gentle stretching and short, light walks to ease nausea.');
+458:      strategy.push('Always consult with your healthcare provider for pregnancy-safe exercises.');
+459:      daily = [
+460:        'Gentle walk (15-20 mins, if feeling well)',
+461:        'Rest',
+462:        'Light stretching for back and hips',
+463:        'Gentle walk (15-20 mins)',
+464:        'Rest',
+465:        'Prenatal breathing exercises',
+466:        'Rest'
+467:      ];
+468:      break;
+469:    case 'Pregnancy - Trimester 2':
+470:      strategy.push('Prenatal Yoga or Pilates class tailored for pregnancy.');
+471:      strategy.push('Swimming or steady-state walking to boost energy and circulation.');
+472:      strategy.push('Light strength training targeting the back and glutes for posture support.');
+473:      daily = [
+474:        'Steady-state walking (30 mins)',
+475:        'Prenatal Pilates or Yoga',
+476:        'Light strength (Back & Arms)',
+477:        'Swimming or water walking',
+478:        'Light strength (Glutes & Legs)',
+479:        'Mobility & gentle stretches',
+480:        'Rest'
+481:      ];
+482:      break;
+483:    case 'Pregnancy - Trimester 3':
+484:      strategy.push('Pelvic floor awareness and deep breathing techniques for birth prep.');
+485:      strategy.push('Very gentle, short walks. Avoid standing for extended periods.');
+486:      strategy.push('Birthing ball exercises and hip opening stretches (with provider approval).');
+487:      daily = [
+488:        'Birthing ball stretches & deep breathing',
+489:        'Short gentle walk (15 mins)',
+490:        'Prenatal Yoga (Hip openers)',
+491:        'Rest & pelvic floor exercises',
+492:        'Short gentle walk (15 mins)',
+493:        'Birthing ball stretches',
+494:        'Rest'
+495:      ];
+496:      break;
+497:    case 'Postpartum':
+498:      strategy.push('Prioritize deep rest and physical recovery initially.');
+499:      strategy.push('Gentle pelvic floor rehab and breathing exercises.');
+500:      strategy.push('Short, slow walks once cleared by a healthcare provider.');
+501:      daily = [
+502:        'Deep breathing & pelvic floor connection',
+503:        'Short slow walk (10-15 mins)',
+504:        'Gentle core restoration breathing',
+505:        'Short slow walk (10-15 mins)',
+506:        'Light upper body mobility',
+507:        'Deep breathing & pelvic floor connection',
+508:        'Rest'
+509:      ];
+510:      break;
+511:  }
+512:  
+513:  return { strategy, daily };
+514:}
+515:
+516:export function getShoppingList(phase: Phase, location: Location, isPcos: boolean, isVegan: boolean = false): string[] {
+517:  const foods = foodDatabase[location];
+518:  const proteins = isVegan ? foods.veganProteins : [foods.animalProteins[0], foods.veganProteins[0], foods.animalProteins[1] || foods.animalProteins[0]];
+519:
+520:  let list = [
+521:    ...foods.veggies.slice(0, 2),
+522:    ...proteins.slice(0, 2),
+523:    ...foods.fats.slice(0, 2),
+524:  ];
+525:  
+526:  if (!isPcos) {
+527:      list.push(...foods.carbs.slice(0, 2));
+528:      list.push(...foods.fruits.slice(0, 2));
+529:  } else {
+530:      list.push(foods.carbs[0]); // Less carbs
+531:      list.push(foods.fruits[0]); // Less sugar
+532:      list.push('Extra Green Veggies');
+533:  }
+534:
+535:  if (phase === 'Menstrual' || phase === 'Follicular') {
+536:      list.push('Flax seeds', 'Pumpkin seeds');
+537:  } else if (phase === 'Luteal' || phase === 'Ovulation') {
+538:      list.push('Sesame seeds', 'Sunflower seeds');
+539:  } else {
+540:      list.push('Mixed seeds (Flax, Pumpkin, Sesame, Sunflower)');
+541:      list.push('Calcium-rich leafy greens');
+542:  }
+543:
+544:  return [...new Set(list)]; // unique items
+545:}

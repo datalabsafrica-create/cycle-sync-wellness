@@ -1,10 +1,7 @@
-//rm358.com/4/10964843?var={your_source_id}&ymid={your_clickid_here}&amount={amount}&geo={geo}&request_var={your_parameter}
-import { useEffect } from "react";
 import { useState } from 'react';
-import { Calendar, MapPin, Activity, Leaf, ShoppingCart, Heart, Info, Sun, Lock, User, CheckCircle, ChevronRight, Share2, Mail } from 'lucide-react';
-import { getPhase, getMeals, getWorkouts, getShoppingList, getSeedCycling, Location, UserMode, CycleType } from './lib/cycleData';
+import { Calendar, MapPin, Activity, Leaf, ShoppingCart, Heart, Info, Sun, Lock, User, CheckCircle, ChevronRight, Share2, Mail, Droplet } from 'lucide-react';
+import { getPhase, getMeals, getWorkouts, getShoppingList, getSeedCycling, getHydration, Location, UserMode, CycleType } from './lib/cycleData';
 import PaymentModal from './components/PaymentModal';
-import AdSlot from './components/AdSlot';
 
 export default function App() {
   const [mode, setMode] = useState<UserMode>('Cycle Sync');
@@ -32,6 +29,7 @@ export default function App() {
   const meals = getMeals(cycleData.phase, location, isPcos, isVegan);
   const workouts = getWorkouts(cycleData.phase, isPcos);
   const shoppingList = getShoppingList(cycleData.phase, location, isPcos, isVegan);
+  const hydration = getHydration(cycleData.phase, isPcos);
   const seedCycling = getSeedCycling(day, mode, cycleType);
 
   const formatShareText = () => {
@@ -52,6 +50,10 @@ export default function App() {
     workouts.strategy.forEach(w => text += `- ${w}\n`);
     text += `\n7-Day Plan:\n`;
     workouts.daily.forEach((w, i) => text += `Day ${i+1}: ${w}\n`);
+    text += `\n`;
+
+    text += `*Hydration Plan:*\n`;
+    hydration.forEach(h => text += `- ${h}\n`);
     text += `\n`;
 
     text += `*Wellness & Seed Cycling Tips:*\n`;
@@ -83,7 +85,6 @@ export default function App() {
           >
             Unlock Now <ChevronRight className="w-4 h-4" />
           </button>
-          <AdSlot />
         </div>
       )}
 
@@ -104,7 +105,6 @@ export default function App() {
             <p className="text-sm text-emerald-800">
               Your 7-day personalized plan has been generated and queued for delivery via <strong>{deliveryMethod === 'whatsapp' ? 'WhatsApp' : 'Email'}</strong>.
             </p>
-           <AdSlot />
          </div>
       )}
 
@@ -274,13 +274,6 @@ export default function App() {
         </div>
       </div>
       
-      {/* 
-        Ad Placement Rule: Non-premium informational pages/areas.
-        Must NOT appear in premium content. 
-      */}
-      {!hasPaid && (
-         <AdSlot zoneId="sidebar_ad_123" format="rectangle" />
-      )}
     </div>
   );
 
@@ -410,9 +403,6 @@ export default function App() {
                 </div>
               </div>
               
-              {/* Ad Placement Rule: Free wellness tips section / Informational areas */}
-              <AdSlot zoneId="main_banner_456" format="banner" className="my-8" />
-              
               <div className="bg-gradient-to-br from-indigo-600 via-purple-600 to-rose-600 p-8 rounded-3xl text-white text-center shadow-lg relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none" />
                 <Lock className="w-10 h-10 mx-auto text-white/80 mb-4" />
@@ -487,19 +477,36 @@ export default function App() {
                </div>
 
                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 h-full">
-                    <h3 className="font-semibold text-lg mb-4 flex items-center gap-2 text-slate-800">
-                      <ShoppingCart className="w-5 h-5 text-indigo-500" />
-                      Weekly Grocery List
-                    </h3>
-                    <ul className="grid grid-cols-2 gap-y-3 gap-x-2">
-                      {shoppingList.map((item, idx) => (
-                        <li key={idx} className="flex gap-2 text-sm text-slate-700 items-start">
-                          <CheckCircle className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
-                          <span>{item}</span>
-                        </li>
-                      ))}
-                    </ul>
+                  <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 h-full flex flex-col gap-6">
+                    <div>
+                      <h3 className="font-semibold text-lg mb-4 flex items-center gap-2 text-slate-800">
+                        <ShoppingCart className="w-5 h-5 text-indigo-500" />
+                        Weekly Grocery List
+                      </h3>
+                      <ul className="grid grid-cols-2 gap-y-3 gap-x-2">
+                        {shoppingList.map((item, idx) => (
+                          <li key={idx} className="flex gap-2 text-sm text-slate-700 items-start">
+                            <CheckCircle className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
+                            <span>{item}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    <div className="mt-auto">
+                      <h3 className="font-semibold text-lg mb-4 flex items-center gap-2 text-slate-800 border-b pb-3">
+                        <Droplet className="w-5 h-5 text-cyan-500" />
+                        Hydration Plan
+                      </h3>
+                      <ul className="space-y-3">
+                        {hydration.map((h, idx) => (
+                          <li key={idx} className="flex gap-2 text-sm text-slate-700 items-start">
+                            <div className="mt-1.5 shrink-0 w-1.5 h-1.5 rounded-full bg-cyan-400" />
+                            <span>{h}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
                   </div>
 
                   <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 h-full flex flex-col gap-6">
@@ -556,15 +563,11 @@ export default function App() {
         </div>
       </main>
 
-      {!hasPaid && (
-        <footer className="max-w-5xl mx-auto px-4 py-8 border-t border-slate-200 mt-8">
-           {/* Ad Placement Rule: Homepage footer */}
-           <AdSlot zoneId="footer_ad_789" format="banner" />
-           <p className="text-center text-sm text-slate-500 mt-6">
-             &copy; {new Date().getFullYear()} Women's Wellness App. For informational purposes only. Consult with a healthcare professional before changing your diet or exercise routine.
-           </p>
-        </footer>
-      )}
+      <footer className="max-w-5xl mx-auto px-4 py-8 border-t border-slate-200 mt-8">
+         <p className="text-center text-sm text-slate-500 mt-6">
+           &copy; {new Date().getFullYear()} Women's Wellness App. For informational purposes only. Consult with a healthcare professional before changing your diet or exercise routine.
+         </p>
+      </footer>
     </div>
   );
 }
