@@ -83,6 +83,7 @@ export default function App() {
           >
             Unlock Now <ChevronRight className="w-4 h-4" />
           </button>
+          <AdSlot />
         </div>
       )}
 
