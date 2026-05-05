@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Check, ArrowRight, MessageCircle, Mail, PlayCircle, ExternalLink } from 'lucide-react';
 
 // ============================================================================
-// 🛑 PASTE YOUR SMART AD LINK HERE 🛑
+// "https://rm358.com/4/10964843?var=home_cta"
 // Replace the empty string below with your actual ad network smart link.
 // Example: const SMART_AD_LINK = 'https://cleanmaster.com/special-offer';
 // ============================================================================
