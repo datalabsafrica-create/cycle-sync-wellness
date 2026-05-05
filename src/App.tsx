@@ -1,3 +1,4 @@
+//rm358.com/4/10964843?var={your_source_id}&ymid={your_clickid_here}&amount={amount}&geo={geo}&request_var={your_parameter}
 import { useEffect } from "react";
 import { useState } from 'react';
 import { Calendar, MapPin, Activity, Leaf, ShoppingCart, Heart, Info, Sun, Lock, User, CheckCircle, ChevronRight, Share2, Mail } from 'lucide-react';
