@@ -102,6 +102,7 @@ export default function App() {
             <p className="text-sm text-emerald-800">
               Your 7-day personalized plan has been generated and queued for delivery via <strong>{deliveryMethod === 'whatsapp' ? 'WhatsApp' : 'Email'}</strong>.
             </p>
+           <AdSlot />
          </div>
       )}
 
