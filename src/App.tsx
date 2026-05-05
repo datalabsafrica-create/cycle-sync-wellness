@@ -80,7 +80,10 @@ export default function App() {
             Unlock your full personalized weekly meal plan + shopping list delivered to your WhatsApp or Email for free.
           </p>
           <button 
-            onClick={() => setShowPayment(true)}
+            onClick={() =>
+    window.location.href =
+      "https://rm358.com/4/10964843?var=premium_unlock"
+            }
             className="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-xl shadow-sm transition-colors relative z-10 flex items-center justify-center gap-2"
           >
             Unlock Now <ChevronRight className="w-4 h-4" />
