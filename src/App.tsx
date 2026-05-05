@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useState } from 'react';
 import { Calendar, MapPin, Activity, Leaf, ShoppingCart, Heart, Info, Sun, Lock, User, CheckCircle, ChevronRight, Share2, Mail } from 'lucide-react';
 import { getPhase, getMeals, getWorkouts, getShoppingList, getSeedCycling, Location, UserMode, CycleType } from './lib/cycleData';
