@@ -1,5 +1,13 @@
-import { useState } from 'react';
-import { CreditCard, Check, ArrowRight, MessageCircle, Mail } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Check, ArrowRight, MessageCircle, Mail, PlayCircle, ExternalLink } from 'lucide-react';
+
+// ============================================================================
+// 🛑 PASTE YOUR SMART AD LINK HERE 🛑
+// Replace the empty string below with your actual ad network smart link.
+// Example: const SMART_AD_LINK = 'https://cleanmaster.com/special-offer';
+// ============================================================================
+const SMART_AD_LINK = ''; 
+// ============================================================================
 
 interface PaymentModalProps {
   onSuccess: (method: 'whatsapp' | 'email') => void;
@@ -10,13 +18,35 @@ export default function PaymentModal({ onSuccess, onClose }: PaymentModalProps) 
   const [step, setStep] = useState<'details' | 'payment'>('details');
   const [isProcessing, setIsProcessing] = useState(false);
   const [deliveryMethod, setDeliveryMethod] = useState<'whatsapp' | 'email'>('whatsapp');
-  
-  const handlePay = () => {
-    setIsProcessing(true);
-    setTimeout(() => {
-      setIsProcessing(false);
-      onSuccess(deliveryMethod);
-    }, 1500);
+  const [adClicked, setAdClicked] = useState(false);
+  const [countdown, setCountdown] = useState(0);
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (countdown > 0) {
+      timer = setTimeout(() => setCountdown(c => c - 1), 1000);
+    } else if (countdown === 0 && adClicked && !isProcessing) {
+      setIsProcessing(true);
+      // Ensure we transition to success state smoothly
+      setTimeout(() => {
+        onSuccess(deliveryMethod);
+      }, 1000);
+    }
+    return () => clearTimeout(timer);
+  }, [countdown, adClicked, isProcessing, deliveryMethod, onSuccess]);
+
+  const handleWatchAd = () => {
+    if (!SMART_AD_LINK) {
+      alert("Developer: Please configure the SMART_AD_LINK in the PaymentModal.tsx file first to use this feature.");
+      return;
+    }
+    
+    // Open the smart ad link in a new tab
+    window.open(SMART_AD_LINK, '_blank');
+    
+    // Start a countdown (e.g., 15 seconds) assuming they are watching an ad
+    setAdClicked(true);
+    setCountdown(15);
   };
 
   return (
@@ -112,16 +142,24 @@ export default function PaymentModal({ onSuccess, onClose }: PaymentModalProps) 
 
               <div className="space-y-3">
                 <button 
-                  onClick={handlePay}
-                  disabled={isProcessing}
+                  onClick={handleWatchAd}
+                  disabled={adClicked || isProcessing}
                   className="w-full flex items-center justify-center gap-2 py-3.5 bg-slate-900 text-white rounded-xl font-semibold hover:bg-slate-800 transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
                 >
                   {isProcessing ? (
-                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                     <div className="flex items-center gap-2">
+                       <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                       <span>Unlocking...</span>
+                     </div>
+                  ) : adClicked ? (
+                     <div className="flex items-center gap-2">
+                       <span className="animate-pulse">Watching Ad... ({countdown}s)</span>
+                     </div>
                   ) : (
                     <>
-                      <Check className="w-5 h-5" />
-                      Get Free Plan
+                      <PlayCircle className="w-5 h-5" />
+                      Watch Ad to Unlock
+                      <ExternalLink className="w-4 h-4 ml-1 opacity-70" />
                     </>
                   )}
                 </button>
