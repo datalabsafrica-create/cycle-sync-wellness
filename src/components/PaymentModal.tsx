@@ -2,11 +2,11 @@ import { useState, useEffect } from 'react';
 import { Check, ArrowRight, MessageCircle, Mail, PlayCircle, ExternalLink } from 'lucide-react';
 
 // ============================================================================
-// "https://rm358.com/4/10964843?var=home_cta"
+// 🛑 PASTE YOUR SMART AD LINK HERE 🛑
 // Replace the empty string below with your actual ad network smart link.
 // Example: const SMART_AD_LINK = 'https://cleanmaster.com/special-offer';
 // ============================================================================
-const SMART_AD_LINK = 'https://rm358.com/4/10964843?var=home_cta'; 
+const SMART_AD_LINK = ''; 
 // ============================================================================
 
 interface PaymentModalProps {
