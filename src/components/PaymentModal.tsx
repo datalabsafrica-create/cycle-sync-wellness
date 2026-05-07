@@ -6,7 +6,7 @@ import { Check, ArrowRight, MessageCircle, Mail, PlayCircle, ExternalLink } from
 // Replace the empty string below with your actual ad network smart link.
 // Example: const SMART_AD_LINK = 'https://cleanmaster.com/special-offer';
 // ============================================================================
-const SMART_AD_LINK = ''; 
+const SMART_AD_LINK = 'https://rm358.com/4/10964843?var=premium_unlock'; 
 // ============================================================================
 
 interface PaymentModalProps {
