@@ -6,7 +6,7 @@ import { Check, ArrowRight, MessageCircle, Mail, PlayCircle, ExternalLink } from
 // Replace the empty string below with your actual ad network smart link.
 // Example: const SMART_AD_LINK = 'https://cleanmaster.com/special-offer';
 // ============================================================================
-const SMART_AD_LINK = 'https://rm358.com/4/10964843?var=premium_unlock'; 
+const SMART_AD_LINK = ''; 
 // ============================================================================
 
 interface PaymentModalProps {
@@ -19,21 +19,44 @@ export default function PaymentModal({ onSuccess, onClose }: PaymentModalProps) 
   const [isProcessing, setIsProcessing] = useState(false);
   const [deliveryMethod, setDeliveryMethod] = useState<'whatsapp' | 'email'>('whatsapp');
   const [adClicked, setAdClicked] = useState(false);
-  const [countdown, setCountdown] = useState(0);
 
   useEffect(() => {
-    let timer: NodeJS.Timeout;
-    if (countdown > 0) {
-      timer = setTimeout(() => setCountdown(c => c - 1), 1000);
-    } else if (countdown === 0 && adClicked && !isProcessing) {
-      setIsProcessing(true);
-      // Ensure we transition to success state smoothly
-      setTimeout(() => {
-        onSuccess(deliveryMethod);
-      }, 1000);
+    if (adClicked && !isProcessing) {
+      const handleFocus = () => {
+        setIsProcessing(true);
+        setTimeout(() => {
+          onSuccess(deliveryMethod);
+        }, 1000);
+        window.removeEventListener('focus', handleFocus);
+        window.removeEventListener('visibilitychange', handleVisibility);
+      };
+
+      const handleVisibility = () => {
+        if (document.visibilityState === 'visible') {
+          handleFocus();
+        }
+      };
+
+      const timeoutId = setTimeout(() => {
+        window.addEventListener('focus', handleFocus);
+        window.addEventListener('visibilitychange', handleVisibility);
+      }, 500);
+
+      const fallbackTimer = setTimeout(() => {
+        if (!isProcessing) {
+          setIsProcessing(true);
+          onSuccess(deliveryMethod);
+        }
+      }, 20000);
+
+      return () => {
+        clearTimeout(timeoutId);
+        clearTimeout(fallbackTimer);
+        window.removeEventListener('focus', handleFocus);
+        window.removeEventListener('visibilitychange', handleVisibility);
+      };
     }
-    return () => clearTimeout(timer);
-  }, [countdown, adClicked, isProcessing, deliveryMethod, onSuccess]);
+  }, [adClicked, isProcessing, deliveryMethod, onSuccess]);
 
   const handleWatchAd = () => {
     if (!SMART_AD_LINK) {
@@ -44,9 +67,7 @@ export default function PaymentModal({ onSuccess, onClose }: PaymentModalProps) 
     // Open the smart ad link in a new tab
     window.open(SMART_AD_LINK, '_blank');
     
-    // Start a countdown (e.g., 15 seconds) assuming they are watching an ad
     setAdClicked(true);
-    setCountdown(15);
   };
 
   return (
@@ -153,7 +174,7 @@ export default function PaymentModal({ onSuccess, onClose }: PaymentModalProps) 
                      </div>
                   ) : adClicked ? (
                      <div className="flex items-center gap-2">
-                       <span className="animate-pulse">Watching Ad... ({countdown}s)</span>
+                       <span className="animate-pulse">Waiting for you to finish...</span>
                      </div>
                   ) : (
                     <>

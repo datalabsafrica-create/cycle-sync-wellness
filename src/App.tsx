@@ -345,65 +345,7 @@ export default function App() {
 
           {!hasPaid ? (
             <>
-              {/* FREE TIER PREVIEW */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                 <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 h-full">
-                  <h3 className="font-semibold text-lg mb-4 flex items-center gap-2 text-slate-800">
-                    <Leaf className="w-5 h-5 text-emerald-500" />
-                    1-Day Meal Preview
-                  </h3>
-                  <div className="space-y-4">
-                    <div className="bg-slate-50 p-3 rounded-xl border border-slate-100">
-                      <span className="text-xs font-bold text-slate-500 uppercase flex items-center gap-1">Breakfast</span>
-                      <p className="text-sm text-slate-700 mt-1">{meals.breakfast[0]}</p>
-                    </div>
-                    <div className="bg-slate-50 p-3 rounded-xl border border-slate-100">
-                      <span className="text-xs font-bold text-slate-500 uppercase flex items-center gap-1">Lunch</span>
-                      <p className="text-sm text-slate-700 mt-1">{meals.lunch[0]}</p>
-                    </div>
-                    <div className="bg-slate-50 p-3 rounded-xl border border-slate-100">
-                      <span className="text-xs font-bold text-slate-500 uppercase">Dinner</span>
-                      <p className="text-sm text-slate-700 mt-1">{meals.dinner[0]}</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 h-full">
-                  <h3 className="font-semibold text-lg mb-4 flex items-center gap-2 text-slate-800">
-                    <Activity className="w-5 h-5 text-amber-500" />
-                    Workout Preview
-                  </h3>
-                  <div className="space-y-4">
-                    <div className="bg-slate-50 p-3 rounded-xl border border-slate-100 mb-3">
-                      <span className="text-xs font-bold text-amber-600 uppercase mb-2 block">Strategy</span>
-                      <ul className="space-y-2">
-                        {workouts.strategy.map((workout, idx) => (
-                          <li key={idx} className="flex gap-2 text-sm text-slate-700">
-                            <div className="mt-1.5 shrink-0 w-1.5 h-1.5 rounded-full bg-amber-400" />
-                            <span>{workout}</span>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                    
-                    <div className="bg-slate-50 p-3 rounded-xl border border-slate-100">
-                      <span className="text-xs font-bold text-slate-500 uppercase flex items-center gap-1">Day 1 Focus</span>
-                      <p className="text-sm text-slate-700 mt-1 font-medium">{workouts.daily[0]}</p>
-                    </div>
-                    <div className="bg-slate-50 p-3 rounded-xl border border-slate-100">
-                      <span className="text-xs font-bold text-slate-500 uppercase">Day 2 Focus</span>
-                      <p className="text-sm text-slate-700 mt-1">{workouts.daily[1]}</p>
-                    </div>
-                  </div>
-                  
-                  <div className="mt-6 p-4 border border-rose-100 bg-rose-50/50 rounded-xl">
-                      <h4 className="font-semibold text-rose-900 text-sm mb-1 flex items-center gap-1"><Info className="w-4 h-4"/> Wellness Insight</h4>
-                      <p className="text-sm text-rose-800 leading-relaxed">{seedCycling}</p>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="bg-gradient-to-br from-indigo-600 via-purple-600 to-rose-600 p-8 rounded-3xl text-white text-center shadow-lg relative overflow-hidden">
+              <div className="bg-gradient-to-br from-indigo-600 via-purple-600 to-rose-600 p-8 rounded-3xl text-white text-center shadow-lg relative overflow-hidden mt-6">
                 <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none" />
                 <Lock className="w-10 h-10 mx-auto text-white/80 mb-4" />
                 <h2 className="text-2xl font-bold mb-2">Want to see your full week?</h2>
