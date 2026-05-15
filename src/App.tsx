@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { Calendar, MapPin, Activity, Leaf, ShoppingCart, Heart, Info, Sun, Lock, User, CheckCircle, ChevronRight, Share2, Mail, Droplet } from 'lucide-react';
-import { getPhase, getMeals, getWorkouts, getShoppingList, getSeedCycling, getHydration, Location, UserMode, CycleType } from './lib/cycleData';
+import { Calendar, MapPin, Activity, Leaf, ShoppingCart, Heart, Info, Sun, Lock, User, CheckCircle, ChevronRight, Share2, Mail, Droplet, Sparkles } from 'lucide-react';
+import { getPhase, getMeals, getWorkouts, getShoppingList, getSeedCycling, getHydration, getLymphaticRoutine, Location, UserMode, CycleType } from './lib/cycleData';
 import PaymentModal from './components/PaymentModal';
 
 export default function App() {
@@ -31,6 +31,7 @@ export default function App() {
   const shoppingList = getShoppingList(cycleData.phase, location, isPcos, isVegan);
   const hydration = getHydration(cycleData.phase, isPcos);
   const seedCycling = getSeedCycling(day, mode, cycleType);
+  const lymphaticRoutine = getLymphaticRoutine();
 
   const formatShareText = () => {
     let text = `My Personalized Wellness Plan (${mode} - ${cycleData.phase} Phase)\n\n`;
@@ -538,10 +539,29 @@ export default function App() {
                         {seedCycling}
                       </p>
                     </div>
+
+                    {isPcos && (
+                      <div className="pt-4 border-t border-slate-100 mt-2">
+                        <h3 className="font-semibold text-lg mb-3 flex items-center gap-2 text-slate-800">
+                          <Activity className="w-5 h-5 text-indigo-500" />
+                          PCOS Lymphatic Drainage Routine
+                        </h3>
+                        <div className="bg-indigo-50/50 p-4 rounded-xl border border-indigo-100">
+                          <ul className="space-y-3">
+                            {lymphaticRoutine.map((step, idx) => (
+                              <li key={idx} className="flex gap-2 text-sm text-slate-700 items-start">
+                                <div className="mt-1.5 shrink-0 w-1.5 h-1.5 rounded-full bg-indigo-400" />
+                                <span>{step}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      </div>
+                    )}
                   </div>
-               </div>
-             </>
-          )}
+                </div>
+              </>
+           )}
 
         </div>
       </main>

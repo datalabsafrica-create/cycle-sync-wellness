@@ -606,3 +606,13 @@ export function getHydration(phase: Phase, isPcos: boolean): string[] {
   
   return hydrationDesc;
 }
+
+export function getLymphaticRoutine(): string[] {
+  return [
+    'Dry Brushing: Starting at your feet, gently brush upward toward your heart using short, sweeping strokes before showering.',
+    'Neck & Collarbone Sweep: With crossed hands over your chest, gently tap and sweep fingers downward into the collarbones.',
+    'Abdominal Massage: Use light circular counter-clockwise motions over your stomach to aid digestion and flow.',
+    'Legs Elevated: Rest with legs up the wall for 10-15 minutes at the end of the day to encourage fluid return.',
+    'Deep Breathing: 5 minutes of deep belly breathing to manually pump the lymphatic system.'
+  ];
+}
