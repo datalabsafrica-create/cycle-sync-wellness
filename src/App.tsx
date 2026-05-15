@@ -345,19 +345,60 @@ export default function App() {
 
           {!hasPaid ? (
             <>
-              <div className="bg-gradient-to-br from-indigo-600 via-purple-600 to-rose-600 p-8 rounded-3xl text-white text-center shadow-lg relative overflow-hidden mt-6">
+              <div className="bg-gradient-to-br from-indigo-600 via-purple-600 to-rose-600 p-8 sm:p-10 rounded-3xl text-white shadow-lg relative overflow-hidden mt-6">
                 <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none" />
-                <Lock className="w-10 h-10 mx-auto text-white/80 mb-4" />
-                <h2 className="text-2xl font-bold mb-2">Want to see your full week?</h2>
-                <p className="text-indigo-100 max-w-md mx-auto mb-6 text-sm">
-                  Unlock your full personalized weekly meal plan + shopping list delivered directly to your WhatsApp or Email for free.
-                </p>
-                <button 
-                  onClick={() => setShowPayment(true)}
-                  className="px-8 py-3.5 bg-white text-indigo-600 font-bold rounded-xl shadow-md hover:shadow-lg transition-all"
-                >
-                  Unlock 7-Day Plan - Free
-                </button>
+                <div className="max-w-2xl mx-auto relative z-10">
+                  <div className="text-center mb-8">
+                    <Lock className="w-10 h-10 mx-auto text-white/80 mb-4" />
+                    <h2 className="text-3xl font-bold mb-3">Unlock Your Full Weekly Plan</h2>
+                    <p className="text-indigo-100 text-lg">
+                      Get personalized guidance for exactly where you are in your cycle, delivered directly to you.
+                    </p>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8 text-left">
+                    <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-5 border border-white/20">
+                      <div className="flex items-center gap-3 mb-3">
+                        <Leaf className="w-6 h-6 text-emerald-300" />
+                        <h3 className="font-semibold text-lg">7-Day Meal Plan</h3>
+                      </div>
+                      <p className="text-indigo-100 text-sm">Complete breakfast, lunch, and dinner recipes optimized for your hormones.</p>
+                    </div>
+                    
+                    <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-5 border border-white/20">
+                      <div className="flex items-center gap-3 mb-3">
+                        <Activity className="w-6 h-6 text-amber-300" />
+                        <h3 className="font-semibold text-lg">Daily Workouts</h3>
+                      </div>
+                      <p className="text-indigo-100 text-sm">Movement strategies synced to your energy levels, whether home or gym.</p>
+                    </div>
+                    
+                    <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-5 border border-white/20">
+                      <div className="flex items-center gap-3 mb-3">
+                        <ShoppingCart className="w-6 h-6 text-cyan-300" />
+                        <h3 className="font-semibold text-lg">Shopping List</h3>
+                      </div>
+                      <p className="text-indigo-100 text-sm">Organized grocery list for the whole week to save you time and money.</p>
+                    </div>
+                    
+                    <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-5 border border-white/20">
+                      <div className="flex items-center gap-3 mb-3">
+                        <Heart className="w-6 h-6 text-rose-300" />
+                        <h3 className="font-semibold text-lg">Wellness Insights</h3>
+                      </div>
+                      <p className="text-indigo-100 text-sm">Seed cycling advice, lifestyle tips, and hydration targets specific to your phase.</p>
+                    </div>
+                  </div>
+
+                  <div className="text-center">
+                    <button 
+                      onClick={() => setShowPayment(true)}
+                      className="px-8 py-4 bg-white text-indigo-600 font-bold rounded-xl shadow-md hover:shadow-xl transition-all transform hover:-translate-y-1 w-full sm:w-auto"
+                    >
+                      Unlock Full Experience - Free
+                    </button>
+                  </div>
+                </div>
               </div>
             </>
           ) : (
