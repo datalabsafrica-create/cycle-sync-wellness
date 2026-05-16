@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Calendar, MapPin, Activity, Leaf, ShoppingCart, Heart, Info, Sun, Lock, User, CheckCircle, ChevronRight, Share2, Mail, Droplet, Sparkles } from 'lucide-react';
 import { getPhase, getMeals, getWorkouts, getShoppingList, getSeedCycling, getHydration, getLymphaticRoutine, Location, UserMode, CycleType } from './lib/cycleData';
 import PaymentModal from './components/PaymentModal';
+import LandingPageAd from './components/LandingPageAd';
 
 export default function App() {
   const [mode, setMode] = useState<UserMode>('Cycle Sync');
@@ -346,6 +347,8 @@ export default function App() {
 
           {!hasPaid ? (
             <>
+              <LandingPageAd />
+              
               <div className="bg-gradient-to-br from-indigo-600 via-purple-600 to-rose-600 p-8 sm:p-10 rounded-3xl text-white shadow-lg relative overflow-hidden mt-6">
                 <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -mr-20 -mt-20 pointer-events-none" />
                 <div className="max-w-2xl mx-auto relative z-10">
