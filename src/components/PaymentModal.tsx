@@ -1,13 +1,5 @@
-import { useState, useEffect } from 'react';
-import { Check, ArrowRight, MessageCircle, Mail, PlayCircle, ExternalLink } from 'lucide-react';
-
-// ============================================================================
-// 🛑 PASTE YOUR SMART AD LINK HERE 🛑
-// Replace the empty string below with your actual ad network smart link.
-// Example: const SMART_AD_LINK = 'https://cleanmaster.com/special-offer';
-// ============================================================================
-const SMART_AD_LINK = ''; 
-// ============================================================================
+import { useState } from 'react';
+import { Check, ArrowRight, MessageCircle, Mail } from 'lucide-react';
 
 interface PaymentModalProps {
   onSuccess: (method: 'whatsapp' | 'email') => void;
@@ -18,56 +10,12 @@ export default function PaymentModal({ onSuccess, onClose }: PaymentModalProps) 
   const [step, setStep] = useState<'details' | 'payment'>('details');
   const [isProcessing, setIsProcessing] = useState(false);
   const [deliveryMethod, setDeliveryMethod] = useState<'whatsapp' | 'email'>('whatsapp');
-  const [adClicked, setAdClicked] = useState(false);
 
-  useEffect(() => {
-    if (adClicked && !isProcessing) {
-      const handleFocus = () => {
-        setIsProcessing(true);
-        setTimeout(() => {
-          onSuccess(deliveryMethod);
-        }, 1000);
-        window.removeEventListener('focus', handleFocus);
-        window.removeEventListener('visibilitychange', handleVisibility);
-      };
-
-      const handleVisibility = () => {
-        if (document.visibilityState === 'visible') {
-          handleFocus();
-        }
-      };
-
-      const timeoutId = setTimeout(() => {
-        window.addEventListener('focus', handleFocus);
-        window.addEventListener('visibilitychange', handleVisibility);
-      }, 500);
-
-      const fallbackTimer = setTimeout(() => {
-        if (!isProcessing) {
-          setIsProcessing(true);
-          onSuccess(deliveryMethod);
-        }
-      }, 20000);
-
-      return () => {
-        clearTimeout(timeoutId);
-        clearTimeout(fallbackTimer);
-        window.removeEventListener('focus', handleFocus);
-        window.removeEventListener('visibilitychange', handleVisibility);
-      };
-    }
-  }, [adClicked, isProcessing, deliveryMethod, onSuccess]);
-
-  const handleWatchAd = () => {
-    if (!SMART_AD_LINK) {
-      alert("Developer: Please configure the SMART_AD_LINK in the PaymentModal.tsx file first to use this feature.");
-      return;
-    }
-    
-    // Open the smart ad link in a new tab
-    window.open(SMART_AD_LINK, '_blank');
-    
-    setAdClicked(true);
+  const handleUnlock = () => {
+    setIsProcessing(true);
+    setTimeout(() => {
+      onSuccess(deliveryMethod);
+    }, 1000);
   };
 
   return (
@@ -163,8 +111,8 @@ export default function PaymentModal({ onSuccess, onClose }: PaymentModalProps) 
 
               <div className="space-y-3">
                 <button 
-                  onClick={handleWatchAd}
-                  disabled={adClicked || isProcessing}
+                  onClick={handleUnlock}
+                  disabled={isProcessing}
                   className="w-full flex items-center justify-center gap-2 py-3.5 bg-slate-900 text-white rounded-xl font-semibold hover:bg-slate-800 transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
                 >
                   {isProcessing ? (
@@ -172,15 +120,9 @@ export default function PaymentModal({ onSuccess, onClose }: PaymentModalProps) 
                        <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                        <span>Unlocking...</span>
                      </div>
-                  ) : adClicked ? (
-                     <div className="flex items-center gap-2">
-                       <span className="animate-pulse">Waiting for you to finish...</span>
-                     </div>
                   ) : (
                     <>
-                      <PlayCircle className="w-5 h-5" />
-                      Watch Ad to Unlock
-                      <ExternalLink className="w-4 h-4 ml-1 opacity-70" />
+                      Unlock Now
                     </>
                   )}
                 </button>

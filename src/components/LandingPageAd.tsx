@@ -29,7 +29,7 @@ export default function LandingPageAd() {
     // If you just have a direct smartlink URL and want users to click it,
     // put the URL here, and it will be rendered as a button below!
     // ------------------------------------------------------------------------
-    const smartlinkUrl = "https://www.effectivecpmnetwork.com/eptfdgegw?key=9029ed441555986ae5243084e752e0d5"; // e.g., "https://www.profitablecpmrate.com/..."
+    const smartlinkUrl = ""; // e.g., "https://www.profitablecpmrate.com/..."
 
     // --- INJECTION LOGIC ---
     let scriptElement: HTMLScriptElement | null = null;
@@ -54,34 +54,26 @@ export default function LandingPageAd() {
   }, []);
 
   // For Option 3: Direct smartlink usage
-  const smartlinkUrl = "https://www.effectivecpmnetwork.com/eptfdgegw?key=9029ed441555986ae5243084e752e0d5"; // If you are using option 3, paste URL here too to make the prompt go away
+  const smartlinkUrl = ""; // If you are using option 3, paste URL here too to make the prompt go away
 
   return (
-    <div className="w-full my-6 flex flex-col justify-center items-center bg-transparent min-h-[50px] py-6 text-indigo-400 text-sm overflow-hidden">
-      {!smartlinkUrl && (
-        <span className="p-4 text-center bg-indigo-50/50 border border-indigo-100 border-dashed rounded-xl w-full">
-          <strong className="block mb-1 text-indigo-600">Ad / Smartlink Configuration</strong>
-          Open <code className="bg-indigo-100 text-indigo-800 px-1.5 py-0.5 rounded mr-1">src/components/LandingPageAd.tsx</code> 
-          to paste your Ad Script.
-        </span>
-      )}
-      
+    <div className="w-full h-0">
       {smartlinkUrl && (
-        <a 
-          href={smartlinkUrl}
-          target="_blank" 
-          rel="noreferrer noopener"
-          className="mt-2 px-6 py-2 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition"
-        >
-          Special Offer
-        </a>
+        <div className="flex flex-col items-center text-center my-6 py-6 bg-transparent">
+          <a 
+            href={smartlinkUrl}
+            target="_blank" 
+            rel="noreferrer noopener"
+            className="mt-2 px-6 py-3 bg-gradient-to-r from-indigo-500 to-purple-500 text-white font-bold rounded-full shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition-all text-base tracking-wide"
+          >
+            Unlock Premium Access
+          </a>
+          <p className="text-xs text-indigo-400 mt-3 max-w-xs">
+            Note: If the ad or link does not appear, your browser's Adblocker or tracking protection might be blocking it. 
+            Also, some scripts require opening the app in a new tab to work properly outside of the editor preview.
+          </p>
+        </div>
       )}
-
-      {/* 
-        If your ad ALSO gave you standard HTML <div> tags to place on the page,  
-        you can uncomment the line below and paste them inside the backticks:
-      */}
-      {/* <div dangerouslySetInnerHTML={{ __html: `<div>HTML HERE</div>` }} /> */}
     </div>
   );
 }
