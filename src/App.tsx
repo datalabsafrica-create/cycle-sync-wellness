@@ -3,6 +3,7 @@ import { Calendar, MapPin, Activity, Leaf, ShoppingCart, Heart, Info, Sun, Lock,
 import { getPhase, getMeals, getWorkouts, getShoppingList, getSeedCycling, getHydration, getLymphaticRoutine, Location, UserMode, CycleType } from './lib/cycleData';
 import PaymentModal from './components/PaymentModal';
 import LandingPageAd from './components/LandingPageAd';
+import CycleCalculator from './components/CycleCalculator';
 
 export default function App() {
   const [mode, setMode] = useState<UserMode>('Cycle Sync');
@@ -392,6 +393,14 @@ export default function App() {
                       </div>
                       <p className="text-indigo-100 text-sm">Seed cycling advice, lifestyle tips, and hydration targets specific to your phase.</p>
                     </div>
+
+                    <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-5 border border-white/20">
+                      <div className="flex items-center gap-3 mb-3">
+                        <Calendar className="w-6 h-6 text-purple-300" />
+                        <h3 className="font-semibold text-lg">Cycle Calculator</h3>
+                      </div>
+                      <p className="text-indigo-100 text-sm">Predict your next period and plan ahead based on your personal cycle length.</p>
+                    </div>
                   </div>
 
                   <div className="text-center">
@@ -429,6 +438,8 @@ export default function App() {
                   </a>
                 </div>
               </div>
+
+              <CycleCalculator />
 
                <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col gap-6">
                   <h3 className="font-bold text-xl text-slate-900 border-b pb-4 flex items-center gap-2">

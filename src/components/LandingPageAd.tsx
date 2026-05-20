@@ -10,7 +10,7 @@ export default function LandingPageAd() {
   useEffect(() => {
     // ------------------------------------------------------------------------
     // OPTION 1: EXTERNAL SCRIPT (Most common)
-    // If your Social Bar gives you a <script src="<script src="https://pl29460722.effectivecpmnetwork.com/99/65/35/996535d24626d362c1b6d671dc143056.js"></script>" /> tag, 
+    // If your Social Bar gives you a <script src="//..." /> tag, 
     // paste JUST the URL inside these quotes:
     // ------------------------------------------------------------------------
     const externalScriptUrl = ""; // e.g., "https://pl0000000.com/12/34/56.js"
